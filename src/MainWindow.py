@@ -1,6 +1,8 @@
-import sys
+import sys, os
 from PySide.QtGui import *
-from PySide.QtCore import Qt, QSize
+from PySide.QtCore import *
+from FileAudio import FileAudio
+from FileMP3 import *
 
 class MainWindow(QMainWindow):
 
@@ -12,6 +14,8 @@ class MainWindow(QMainWindow):
 
         self.createStatusBar()
         self.createCentralWidget()
+        self.pro = QProcess()
+        self.fileList = []
         
 
     def createStatusBar(self):
@@ -23,7 +27,7 @@ class MainWindow(QMainWindow):
         self.stBar.setMinimumHeight(25)
 
     def createCentralWidget(self):
-        """Creates the central Widget of the window and all of it's components"""
+        """Creates the central Widget of the window and all of its components"""
 
         #Central Widget
         self.centralWidget = QWidget()
@@ -33,28 +37,7 @@ class MainWindow(QMainWindow):
         self.centralWidgetLayout.setSpacing(0)
         
         #Top frame
-        self.topFrame = QFrame()
-        self.topFrame.setStyleSheet("QFrame { border-bottom: 1px solid #ADADAD; background-color: #EEEEEE;}")
-        self.topFrame.setMaximumHeight(35)
-        self.centralWidgetLayout.addWidget(self.topFrame, 0, 0)
-        self.topFrameLayout = QHBoxLayout(self.topFrame)
-        self.topFrameLayout.setContentsMargins(5, 3, 5, 3)
-
-        self.addFolderButton = QToolButton()
-        self.addFolderButton.setText("Add folder...")
-        self.addFolderButton.setIcon(QIcon("resources//imgs//addFolderIcon.png"))
-        self.addFolderButton.setMinimumHeight(27)
-        self.addFolderButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.topFrameLayout.addWidget(self.addFolderButton)
-
-        self.addFileButton = QToolButton()
-        self.addFileButton.setText("Add file...")
-        self.addFileButton.setIcon(QIcon("resources//imgs//addFileIcon.png"))
-        self.addFileButton.setMinimumHeight(27)
-        self.addFileButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.topFrameLayout.addWidget(self.addFileButton)
-
-        self.topFrameLayout.addStretch()
+        self.createTopFrame()
 
         #Central panel
         self.centerLayout = QGridLayout()
@@ -95,9 +78,77 @@ class MainWindow(QMainWindow):
         
         self.centralWidget.setLayout(self.centralWidgetLayout)
 
+    def createTopFrame(self):
+        """Creates de Top Frame and all of its components"""
+        self.topFrame = QFrame()
+        self.topFrame.setStyleSheet("QFrame { border-bottom: 1px solid #ADADAD; background-color: #EEEEEE;}")
+        self.topFrame.setMaximumHeight(35)
+        self.centralWidgetLayout.addWidget(self.topFrame, 0, 0)
+        self.topFrameLayout = QHBoxLayout(self.topFrame)
+        self.topFrameLayout.setContentsMargins(5, 3, 5, 3)
+
+        self.addFileButton = QToolButton()
+        self.addFileButton.setText("Add file...")
+        self.addFileButton.setIcon(QIcon("resources//imgs//addFileIcon.png"))
+        self.addFileButton.setMinimumHeight(27)
+        self.addFileButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.topFrameLayout.addWidget(self.addFileButton)
+        self.addFileButton.clicked.connect(self.addFiles)
+
+        self.addFolderButton = QToolButton()
+        self.addFolderButton.setText("Add folder...")
+        self.addFolderButton.setIcon(QIcon("resources//imgs//addFolderIcon.png"))
+        self.addFolderButton.setMinimumHeight(27)
+        self.addFolderButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.topFrameLayout.addWidget(self.addFolderButton)
+        self.addFolderButton.clicked.connect(self.addFolder)
+
+        self.optionFormatLayout = QHBoxLayout()
+        self.optionFormatLayout.setAlignment(Qt.AlignRight)
+
+        self.formatListBox = QComboBox()
+        self.formatListBox.setMinimumHeight(27)
+        self.formatListBox.addItem(".mp3")
+        self.formatListBox.addItem(".m4a")
+        self.formatListBox.addItem(".flac")
+
+        self.optionFormatLayout.addWidget(self.formatListBox)
+
+        self.topFrameLayout.addLayout(self.optionFormatLayout)
 
     def createMetadataFrame(self):
         self.metadataFrame = QFrame()
         self.metadataFrame.setStyleSheet("QFrame { border-left: 1px solid #ADADAD; background-color: #CCCCCC;}")
         self.metadataFrame.setMaximumWidth(280)
         self.centerLayout.addWidget(self.metadataFrame, 0, 1)
+
+    def addFiles(self):
+        paths = QFileDialog.getOpenFileNames(self, "Add files", os.getcwd())
+        for pat in paths[0]:
+            print(pat)
+            self.analyseAndAdd(pat)
+
+    def analyseAndAdd(self, pathFile):
+        metaInfo = {}
+        process = QProcess()
+        process.start("resources/tools/mediainfo.exe", [pathFile])
+        process.waitForFinished()
+        infoType = ''
+        while process.canReadLine():
+            cad = str(process.readLine()).split(": ", 1)
+            if len(cad) == 2:
+                metaInfo[infoType].update({cad[0].rstrip(): cad[1].rstrip('\r\n')})
+            elif len(cad[0].rstrip('\r\n').rstrip()) > 0:
+                infoType = cad[0].rstrip('\r\n').rstrip()
+                metaInfo[infoType] = {}
+
+        if FileMP3.isFormatSupported(metaInfo):
+            self.fileList.append(FileMP3(metaInfo))
+
+        for files in self.fileList:
+            files.printTags()
+            
+
+    def addFolder(self):
+        paths = QFileDialog.getExistingDirectory(self, "Add Directory", os.getcwd())
+        print(paths)
