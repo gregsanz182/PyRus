@@ -3,11 +3,13 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from FileAudio import FileAudio
 from FileMP3 import *
+from FileListModel import *
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.fileList = []
         self.setWindowTitle("PyRus")
         self.setMinimumWidth(1280)
         self.setMinimumHeight(720)
@@ -15,7 +17,6 @@ class MainWindow(QMainWindow):
         self.createStatusBar()
         self.createCentralWidget()
         self.pro = QProcess()
-        self.fileList = []
         
 
     def createStatusBar(self):
@@ -48,9 +49,7 @@ class MainWindow(QMainWindow):
         self.centerLeftLayout = QGridLayout()
         self.centerLayout.addLayout(self.centerLeftLayout, 0, 0)
         
-        self.songListPanel = QFrame()
-        self.songListPanel.setStyleSheet("QFrame { background-color: #FFFFFF;}")  
-        self.centerLeftLayout.addWidget(self.songListPanel, 0, 0)
+        self.createFileListTable()
 
         self.acceptPanel = QFrame()
         self.acceptPanel.setStyleSheet("QFrame { border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
@@ -118,14 +117,25 @@ class MainWindow(QMainWindow):
 
     def createMetadataFrame(self):
         self.metadataFrame = QFrame()
-        self.metadataFrame.setStyleSheet("QFrame { border-left: 1px solid #ADADAD; background-color: #CCCCCC;}")
-        self.metadataFrame.setMaximumWidth(280)
+        self.metadataFrame.setStyleSheet("QFrame {border-left: 1px solid #ADADAD; background-color: #CCCCCC;}")
+        self.metadataFrame.setMinimumWidth(280)
         self.centerLayout.addWidget(self.metadataFrame, 0, 1)
+
+    def createFileListTable(self):
+        self.fileListTable = QTableView()
+        self.fileListModel = FileListModel(self.fileList)
+        self.fileListTable.setModel(self.fileListModel)
+        self.fileListTable.verticalHeader().setDefaultSectionSize(20)
+        self.fileListTable.setStyleSheet("QTableView {border: 0px;}")
+        self.fileListTable.horizontalHeader().setMovable(True)
+        self.fileListTable.horizontalHeader().setHighlightSections(False)
+        self.fileListTable.setColumnWidth(1, 50)
+        self.fileListTable.setShowGrid(False)
+        self.centerLeftLayout.addWidget(self.fileListTable, 0, 0)
 
     def addFiles(self):
         paths = QFileDialog.getOpenFileNames(self, "Add files", os.getcwd())
         for pat in paths[0]:
-            print(pat)
             self.analyseAndAdd(pat)
 
     def analyseAndAdd(self, pathFile):
@@ -144,10 +154,10 @@ class MainWindow(QMainWindow):
 
         if FileMP3.isFormatSupported(metaInfo):
             self.fileList.append(FileMP3(metaInfo))
+            self.fileListTable.model().insertRow(0)
+            return True
 
-        for files in self.fileList:
-            files.printTags()
-            
+        return False
 
     def addFolder(self):
         paths = QFileDialog.getExistingDirectory(self, "Add Directory", os.getcwd())

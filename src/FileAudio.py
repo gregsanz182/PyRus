@@ -20,9 +20,11 @@ class FileAudio():
         self.bitrateMode = metaInfo["Audio"].get("Bit rate mode")
         self.coverFile = self.getAlbumCover(metaInfo)
         self.lyrics = metaInfo["General"].get("Lyrics")
+        self.duration = metaInfo["Audio"].get("Duration")
+        self.filename = path.basename(self.completePath)
 
     def printTags(self):
-        print("Comple Path:", self.completePath)
+        print("Complete Path:", self.completePath)
         print("Title:", self.title)
         print("Album Artist:", self.album_artist)
         print("Artist:", self.artist)
