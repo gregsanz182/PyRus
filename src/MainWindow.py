@@ -4,6 +4,7 @@ from PySide.QtCore import *
 from FileAudio import FileAudio
 from FileMP3 import *
 from FileListModel import *
+from MetadataWidget import *
 
 class MainWindow(QMainWindow):
 
@@ -116,10 +117,8 @@ class MainWindow(QMainWindow):
         self.topFrameLayout.addLayout(self.optionFormatLayout)
 
     def createMetadataFrame(self):
-        self.metadataFrame = QFrame()
-        self.metadataFrame.setStyleSheet("QFrame {border-left: 1px solid #ADADAD; background-color: #CCCCCC;}")
-        self.metadataFrame.setMinimumWidth(280)
-        self.centerLayout.addWidget(self.metadataFrame, 0, 1)
+        self.metadataWidget = MetadataWidget()
+        self.centerLayout.addWidget(self.metadataWidget, 0, 1)
 
     def createFileListTable(self):
         self.fileListTable = QTableView()
@@ -131,12 +130,25 @@ class MainWindow(QMainWindow):
         self.fileListTable.horizontalHeader().setHighlightSections(False)
         self.fileListTable.setColumnWidth(1, 50)
         self.fileListTable.setShowGrid(False)
+        self.fileListTable.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.fileListSelectionModel = self.fileListTable.selectionModel()
+        self.fileListSelectionModel.selectionChanged.connect(self.hola)
         self.centerLeftLayout.addWidget(self.fileListTable, 0, 0)
+
+    def hola(self, selected, deselected):
+        indexes = self.fileListSelectionModel.selectedRows()
+        self.metadataWidget.setFieldValues(self.fileList, indexes)
 
     def addFiles(self):
         paths = QFileDialog.getOpenFileNames(self, "Add files", os.getcwd())
-        for pat in paths[0]:
+        progressDialog = QProgressDialog("Adding files", "Cancel", 0, len(paths[0]), self)
+        progressDialog.setWindowTitle("Analizing files...")
+        progressDialog.setFixedWidth(400)
+        progressDialog.setWindowModality(Qt.WindowModal)
+        for i, pat in enumerate(paths[0]):
+            progressDialog.setLabelText(str(os.path.basename(pat)))
             self.analyseAndAdd(pat)
+            progressDialog.setValue(i+1)
 
     def analyseAndAdd(self, pathFile):
         metaInfo = {}
