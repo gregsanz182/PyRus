@@ -6,32 +6,37 @@ class MetadataWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet("QFrame {border-left: 1px solid #ADADAD; background-color: #EEEEEE;}")
-        self.setMaximumWidth(280)
+        self.setFixedWidth(280)
 
         self.metadataLayout = MetadataLayout(self)
 
         self.titleLabel = MetadataLabel("Title")
-        self.titleText = QLineEdit()
-        self.metadataLayout.addField(self.titleLabel, self.titleText)
+        self.titleBox = MetadataTextField()
+        self.titleBox.setEditable(True)
+        self.metadataLayout.addField(self.titleLabel, self.titleBox)
 
         self.artistLabel = MetadataLabel("Artist")
-        self.artistText = QLineEdit()
-        self.metadataLayout.addField(self.artistLabel, self.artistText)
+        self.artistBox = MetadataTextField()
+        self.artistBox.setEditable(True)
+        self.metadataLayout.addField(self.artistLabel, self.artistBox)
 
         self.albumLabel = MetadataLabel("Album")
-        self.albumText = QLineEdit()
-        self.metadataLayout.addField(self.albumLabel, self.albumText)
+        self.albumBox = MetadataTextField()
+        self.albumBox.setEditable(True)
+        self.metadataLayout.addField(self.albumLabel, self.albumBox)
         
         self.yearLabel = MetadataLabel("Year")
-        self.yearText = QLineEdit()
-        self.yearText.setMaximumWidth(80)
+        self.yearBox = MetadataTextField()
+        self.yearBox.setEditable(True)
+        self.yearBox.setMaximumWidth(80)
         self.yearLayout = MetadataLayout()
-        self.yearLayout.addField(self.yearLabel, self.yearText)
+        self.yearLayout.addField(self.yearLabel, self.yearBox)
 
         self.genreLabel = MetadataLabel("Genre")
-        self.genreText = QLineEdit()
+        self.genreBox = MetadataTextField()
+        self.genreBox.setEditable(True)
         self.genreLayout = MetadataLayout()
-        self.genreLayout.addField(self.genreLabel, self.genreText)
+        self.genreLayout.addField(self.genreLabel, self.genreBox)
 
         self.yearGenreLayout = QHBoxLayout()
         self.yearGenreLayout.addLayout(self.yearLayout)
@@ -43,17 +48,18 @@ class MetadataWidget(QFrame):
 
     def setFieldValues(self, listFiles, indexes):
         if len(indexes) > 0:
-            self.titleText.setText(listFiles[indexes[0].row()].title)
-            self.artistText.setText(listFiles[indexes[0].row()].artist)
-            self.albumText.setText(listFiles[indexes[0].row()].album)
-            self.yearText.setText(listFiles[indexes[0].row()].year)
-            self.genreText.setText(listFiles[indexes[0].row()].genre)
+            listIndexed = [listFiles[index.row()] for index in indexes] 
+            self.titleBox.setFieldText(set([item.title for item in listIndexed]))
+            self.artistBox.setFieldText(set([item.artist for item in listIndexed]))
+            self.albumBox.setFieldText(set([item.album for item in listIndexed]))
+            self.yearBox.setFieldText(set([item.year for item in listIndexed]))
+            self.genreBox.setFieldText(set([item.genre for item in listIndexed]))
         else:
-            self.titleText.setText("")
-            self.artistText.setText("")
-            self.albumText.setText("")
-            self.yearText.setText("")
-            self.genreText.setText("")
+            self.titleBox.clear()
+            self.artistBox.clear()
+            self.albumBox.clear()
+            self.yearBox.clear()
+            self.genreBox.clear()
 
 
 class MetadataLayout(QVBoxLayout):
@@ -72,3 +78,31 @@ class MetadataLabel(QLabel):
     def __init__(self, text='', parent=None):
         super().__init__(text, parent)
         self.setStyleSheet("QLabel {border: 0px;}")
+
+class MetadataTextField(QComboBox):
+
+    def __init__(self, parent=None, customList=None):
+        super().__init__(parent)
+        self.setEditable(True)
+
+    def setFieldText(self, textSet):
+        self.updateListModel(textSet)
+        if len(textSet) > 1:
+            self.setCurrentIndex(1)
+        else:
+            self.setCurrentIndex(2)
+
+    def obtainTextValue(self, textSet):
+        if len(textSet) > 1:
+            return "< keep >"
+        return list(textSet)[0]
+
+    def updateListModel(self, textSet):
+        textList = ["< delete >", "< keep >"]
+        aux = list(textSet)
+        aux.sort()
+        textList.extend(aux)
+        self.clear()
+        self.addItems(textList)
+
+

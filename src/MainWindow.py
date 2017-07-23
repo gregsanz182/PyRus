@@ -108,6 +108,7 @@ class MainWindow(QMainWindow):
 
         self.formatListBox = QComboBox()
         self.formatListBox.setMinimumHeight(27)
+        self.formatListBox.setEditable(True)
         self.formatListBox.addItem(".mp3")
         self.formatListBox.addItem(".m4a")
         self.formatListBox.addItem(".flac")
@@ -145,6 +146,7 @@ class MainWindow(QMainWindow):
         progressDialog.setWindowTitle("Analizing files...")
         progressDialog.setFixedWidth(400)
         progressDialog.setWindowModality(Qt.WindowModal)
+        progressDialog.show()
         for i, pat in enumerate(paths[0]):
             progressDialog.setLabelText(str(os.path.basename(pat)))
             self.analyseAndAdd(pat)
