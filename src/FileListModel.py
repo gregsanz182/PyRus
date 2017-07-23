@@ -7,6 +7,7 @@ class FileListModel(QAbstractTableModel):
         super().__init__()
         self.list = fileList
         self.header = ["Filename", "#", "Artist", "Title", "Album", "Album Artist", "Year", "Genre", "Lenght"]
+        self.fields = ["<filename>", "<tracknumber>", "<artist>", "<title>", "<album>", "<albumartist>", "<year>", "<genre>", "<lenght>"]
 
     def rowCount(self, parent):
         return len(self.list)
@@ -16,24 +17,7 @@ class FileListModel(QAbstractTableModel):
 
     def data(self, index, role):
         if role == Qt.DisplayRole:
-            if index.column() == 0:
-                return self.list[index.row()].filename
-            elif index.column() == 1:
-                return self.list[index.row()].track
-            elif index.column() == 2:
-                return self.list[index.row()].artist
-            elif index.column() == 3:
-                return self.list[index.row()].title
-            elif index.column() == 4:
-                return self.list[index.row()].album
-            elif index.column() == 5:
-                return self.list[index.row()].album_artist
-            elif index.column() == 6:
-                return self.list[index.row()].year
-            elif index.column() == 7:
-                return self.list[index.row()].genre
-            elif index.column() == 8:
-                return self.list[index.row()].duration
+            return self.list[index.row()].metadata[self.fields[index.column()]]
 
         if role == Qt.BackgroundRole:
             if index.row()%2 == 0:

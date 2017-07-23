@@ -49,11 +49,11 @@ class MetadataWidget(QFrame):
     def setFieldValues(self, listFiles, indexes):
         if len(indexes) > 0:
             listIndexed = [listFiles[index.row()] for index in indexes] 
-            self.titleBox.setFieldText(set([item.title for item in listIndexed]))
-            self.artistBox.setFieldText(set([item.artist for item in listIndexed]))
-            self.albumBox.setFieldText(set([item.album for item in listIndexed]))
-            self.yearBox.setFieldText(set([item.year for item in listIndexed]))
-            self.genreBox.setFieldText(set([item.genre for item in listIndexed]))
+            self.titleBox.setFieldText(set([item.metadata["<title>"] for item in listIndexed]))
+            self.artistBox.setFieldText(set([item.metadata["<artist>"] for item in listIndexed]))
+            self.albumBox.setFieldText(set([item.metadata["<album>"] for item in listIndexed]))
+            self.yearBox.setFieldText(set([item.metadata["<year>"] for item in listIndexed]))
+            self.genreBox.setFieldText(set([item.metadata["<genre>"] for item in listIndexed]))
         else:
             self.titleBox.clear()
             self.artistBox.clear()

@@ -4,55 +4,42 @@ from os import path
 class FileAudio():
 
     def __init__(self, metaInfo):
-        self.completePath = metaInfo["General"]["Complete name"]
-        self.title = metaInfo["General"].get("Track name")
-        self.album_artist = metaInfo["General"].get("Album/Performer")
-        self.artist =  metaInfo["General"].get("Performer")
-        self.album =  metaInfo["General"].get("Album")
-        self.track = metaInfo["General"].get("Track name/Position")
-        self.totalTracks = metaInfo["General"].get("Track name/Total")
-        self.numberDisc =  metaInfo["General"].get("Part/Position")
-        self.totalNumberDisc = metaInfo["General"].get("Part/Total")
-        self.genre = metaInfo["General"].get("Genre")
-        self.year = metaInfo["General"].get("Recorded date")
-        self.commentary = metaInfo["General"].get("Comment")
-        self.bitrate = metaInfo["Audio"].get("Bit rate")
-        self.bitrateMode = metaInfo["Audio"].get("Bit rate mode")
-        self.coverFile = self.getAlbumCover(metaInfo)
-        self.lyrics = metaInfo["General"].get("Lyrics")
-        self.duration = metaInfo["Audio"].get("Duration")
-        self.filename = path.basename(self.completePath)
+        self.metadata = {}
+        self.metadata["<path>"] = metaInfo["General"]["Complete name"]
+        self.metadata["<title>"] = metaInfo["General"].get("Track name")
+        self.metadata["<albumartist>"] = metaInfo["General"].get("Album/Performer")
+        self.metadata["<artist>"] =  metaInfo["General"].get("Performer")
+        self.metadata["<album>"] =  metaInfo["General"].get("Album")
+        self.metadata["<tracknumber>"] = metaInfo["General"].get("Track name/Position")
+        self.metadata["<tracktotal>"] = metaInfo["General"].get("Track name/Total")
+        self.metadata["<discnumber>"] =  metaInfo["General"].get("Part/Position")
+        self.metadata["<disctotal>"] = metaInfo["General"].get("Part/Total")
+        self.metadata["<genre>"] = metaInfo["General"].get("Genre")
+        self.metadata["<year>"] = metaInfo["General"].get("Recorded date")
+        self.metadata["<comment>"] = metaInfo["General"].get("Comment")
+        self.metadata["<bitrate>"] = metaInfo["Audio"].get("Bit rate")
+        self.metadata["<bitratemode>"] = metaInfo["Audio"].get("Bit rate mode")
+        self.metadata["<coverfile>"] = self.getAlbumCover(metaInfo)
+        self.metadata["<lyrics>"] = metaInfo["General"].get("Lyrics")
+        self.metadata["<lenght>"] = metaInfo["Audio"].get("Duration")
+        self.metadata["<filename>"] = path.basename(self.metadata["<path>"])
 
     def printTags(self):
-        print("Complete Path:", self.completePath)
-        print("Title:", self.title)
-        print("Album Artist:", self.album_artist)
-        print("Artist:", self.artist)
-        print("Album:", self.album)
-        print("Track num:", self.track)
-        print("Total tracks:", self.totalTracks)
-        print("Disc number:", self.numberDisc)
-        print("Total Number Disc:", self.totalNumberDisc)
-        print("Genre:", self.genre)
-        print("Year:", self.year)
-        print("Commentary:", self.commentary)
-        print("Bitrate:", self.bitrate)
-        print("Bitrate mode:", self.bitrateMode)
-        print("Lyrics:", self.lyrics)
-        print("Cover:", self.coverFile)
+        for key, value in self.metadata.items():
+            print("{0}: {1}".format(key, value))
 
     def getAlbumCover(self, metaInfo):
         if "Cover" in metaInfo["General"] and metaInfo["General"]["Cover"] == "Yes":
             coverFormat = metaInfo["General"]["Cover MIME"]
             process = QProcess()
-            process.start("resources/tools/mediainfo.exe", ["--Inform=file://resources/tools/art.txt", self.completePath])
+            process.start("resources/tools/mediainfo.exe", ["--Inform=file://resources/tools/art.txt", self.metadata["<path>"]])
             process.waitForFinished();
             if process.canReadLine():
                 cad = process.readLine()
                 byte = QByteArray.fromBase64(cad)
                 name = str(cad)[:60]
                 name = "".join(c for c in name if c.isalnum() or c == ' ')
-                name += self.album[:10]
+                name += self.metadata["<album>"][:10]
                 if coverFormat == "image/jpeg":
                     name += ".jpg"
                 elif coverFormat == "image/png":
@@ -65,4 +52,3 @@ class FileAudio():
                 f.close()
                 return name
         return None
-    
