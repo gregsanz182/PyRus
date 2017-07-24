@@ -30,7 +30,7 @@ class FileAudio():
 
     def getAlbumCover(self, metaInfo):
         if "Cover" in metaInfo["General"] and metaInfo["General"]["Cover"] == "Yes":
-            coverFormat = metaInfo["General"]["Cover MIME"]
+            coverFormat = metaInfo["General"].get("Cover MIME")
             process = QProcess()
             process.start("resources/tools/mediainfo.exe", ["--Inform=file://resources/tools/art.txt", self.metadata["<path>"]])
             process.waitForFinished();
@@ -52,3 +52,10 @@ class FileAudio():
                 f.close()
                 return name
         return None
+
+    def getTagsValue(self, stringText):
+        st = stringText[:]
+        for tag, value in self.metadata.items():
+            st = st.replace(tag, value)
+
+        return st

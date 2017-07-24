@@ -43,7 +43,7 @@ class MyModel(QAbstractTableModel):
         self.endInsertRows()
         return True
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     try:
         mainApp = QApplication(sys.argv)
 
@@ -64,5 +64,25 @@ if __name__ == "__main__":
     except SystemExit:
         print("Closing window...")
     except Exception:
-        print(sys.exc_info()[1])
+        print(sys.exc_info()[1])"""
 
+if __name__ == "__main__":
+    d = {"<artist>": "Hola", "<cadena>": "HolaC", "<cadena2>": "HolaC2"}
+    stringText = "<artist><cadena>estosinoesnada<cadena2>"
+    stack = []
+    tags = []
+    flag = False
+    for c in stringText:
+        if c == '<' or flag == True:
+            stack.append(c)
+            if c == '>':
+                tags.append("".join(stack))
+                stack.clear()
+                flag = False
+            else:
+                flag = True
+
+    for tag, value in d.items():
+        stringText = stringText.replace(tag, value)
+
+    print(stringText)

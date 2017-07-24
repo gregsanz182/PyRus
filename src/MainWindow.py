@@ -3,6 +3,7 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from FileAudio import FileAudio
 from FileMP3 import *
+from FileAAC import *
 from FileListModel import *
 from MetadataWidget import *
 
@@ -25,7 +26,8 @@ class MainWindow(QMainWindow):
         self.stBar = QStatusBar()
         self.stBar.showMessage('Ready')
         self.setStatusBar(self.stBar)
-        self.stBar.setStyleSheet("QStatusBar { border-top: 1px solid #ADADAD; color: #333333; background-color: #EEEEEE;}")
+        self.stBar.setStyleSheet("QStatusBar#statusbar {border-top: 1px solid #ADADAD; color: #333333; background-color: #EEEEEE;}")
+        self.stBar.setObjectName("statusbar")
         self.stBar.setMinimumHeight(25)
 
     def createCentralWidget(self):
@@ -53,7 +55,8 @@ class MainWindow(QMainWindow):
         self.createFileListTable()
 
         self.acceptPanel = QFrame()
-        self.acceptPanel.setStyleSheet("QFrame { border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
+        self.acceptPanel.setStyleSheet("QFrame#acceptPanel {border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
+        self.acceptPanel.setObjectName("acceptPanel")
         self.acceptPanel.setMaximumHeight(65)
         self.centerLeftLayout.addWidget(self.acceptPanel, 1, 0)
         self.acceptPanelLayout = QGridLayout(self.acceptPanel)
@@ -64,7 +67,8 @@ class MainWindow(QMainWindow):
         self.startButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.startButton.setText("Start")
         self.startButton.setMinimumHeight(57)
-        self.startButton.setStyleSheet("QToolButton {padding-left: 13px; padding-right: 13px;}")
+        self.startButton.setStyleSheet("QToolButton#startButton {padding-left: 13px; padding-right: 13px;}")
+        self.startButton.setObjectName("startButton")
         self.startButton.setIcon(QIcon("resources//imgs//startConvert.png"))
         self.startButton.setIconSize(QSize(59, 29))
         self.acceptPanelLayout.addWidget(self.startButton, 0, 3)
@@ -81,7 +85,8 @@ class MainWindow(QMainWindow):
     def createTopFrame(self):
         """Creates de Top Frame and all of its components"""
         self.topFrame = QFrame()
-        self.topFrame.setStyleSheet("QFrame { border-bottom: 1px solid #ADADAD; background-color: #EEEEEE;}")
+        self.topFrame.setStyleSheet("QFrame#topFrame {border-bottom: 1px solid #ADADAD; background-color: #EEEEEE;}")
+        self.topFrame.setObjectName("topFrame")
         self.topFrame.setMaximumHeight(35)
         self.centralWidgetLayout.addWidget(self.topFrame, 0, 0)
         self.topFrameLayout = QHBoxLayout(self.topFrame)
@@ -119,38 +124,46 @@ class MainWindow(QMainWindow):
 
     def createMetadataFrame(self):
         self.metadataWidget = MetadataWidget()
+        self.metadataWidget.changesSaved.connect(self.updateModel)
         self.centerLayout.addWidget(self.metadataWidget, 0, 1)
+
+    def updateModel(self):
+        indexes = self.fileListSelectionModel.selectedIndexes()
+        self.fileListModel.dataChanged.emit(indexes[0], indexes[len(indexes)-1])
 
     def createFileListTable(self):
         self.fileListTable = QTableView()
         self.fileListModel = FileListModel(self.fileList)
         self.fileListTable.setModel(self.fileListModel)
         self.fileListTable.verticalHeader().setDefaultSectionSize(20)
-        self.fileListTable.setStyleSheet("QTableView {border: 0px;}")
+        self.fileListTable.setStyleSheet("QTableView#fileListTable {border: 0px;}")
+        self.fileListTable.setObjectName("fileListTable")
         self.fileListTable.horizontalHeader().setMovable(True)
         self.fileListTable.horizontalHeader().setHighlightSections(False)
         self.fileListTable.setColumnWidth(1, 50)
         self.fileListTable.setShowGrid(False)
         self.fileListTable.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.fileListSelectionModel = self.fileListTable.selectionModel()
-        self.fileListSelectionModel.selectionChanged.connect(self.hola)
+        self.fileListSelectionModel.selectionChanged.connect(self.changeMetadataWidgetValues)
         self.centerLeftLayout.addWidget(self.fileListTable, 0, 0)
 
-    def hola(self, selected, deselected):
+    def changeMetadataWidgetValues(self, selected, deselected):
         indexes = self.fileListSelectionModel.selectedRows()
         self.metadataWidget.setFieldValues(self.fileList, indexes)
 
     def addFiles(self):
         paths = QFileDialog.getOpenFileNames(self, "Add files", os.getcwd())
-        progressDialog = QProgressDialog("Adding files", "Cancel", 0, len(paths[0]), self)
-        progressDialog.setWindowTitle("Analizing files...")
-        progressDialog.setFixedWidth(400)
-        progressDialog.setWindowModality(Qt.WindowModal)
-        progressDialog.show()
-        for i, pat in enumerate(paths[0]):
-            progressDialog.setLabelText(str(os.path.basename(pat)))
-            self.analyseAndAdd(pat)
-            progressDialog.setValue(i+1)
+        if len(paths[0]) > 0:
+            progressDialog = QProgressDialog("Adding files", "Cancel", 0, len(paths[0]), self)
+            progressDialog.setWindowTitle("Analizing files...")
+            progressDialog.setFixedWidth(400)
+            progressDialog.setWindowModality(Qt.WindowModal)
+            progressDialog.show()
+            for i, pat in enumerate(paths[0]):
+                progressDialog.setLabelText(str(os.path.basename(pat)))
+                self.analyseAndAdd(pat)
+                progressDialog.setValue(i+1)
+            progressDialog.close()
 
     def analyseAndAdd(self, pathFile):
         metaInfo = {}
@@ -168,10 +181,13 @@ class MainWindow(QMainWindow):
 
         if FileMP3.isFormatSupported(metaInfo):
             self.fileList.append(FileMP3(metaInfo))
-            self.fileListTable.model().insertRow(0)
-            return True
+        elif FileAAC.isFormatSupported(metaInfo):
+            self.fileList.append(FileAAC(metaInfo))
+        else:
+            return False
+        self.fileListTable.model().insertRow(0)
 
-        return False
+        return True
 
     def addFolder(self):
         paths = QFileDialog.getExistingDirectory(self, "Add Directory", os.getcwd())

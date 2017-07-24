@@ -41,3 +41,4 @@ class FileListModel(QAbstractTableModel):
         self.beginInsertRows(QModelIndex(), row, row + count - 1)
         self.endInsertRows()
         return True
+    
