@@ -5,7 +5,7 @@ class TopFrame(QFrame):
     """Top Frame of the application. Provides add and delete buttons for file list managing"""
 
     def __init__(self, parent=None):
-        """Constructor of the class. Initializes and sets all of the components"""
+        """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.setStyleSheet("QFrame#topFrame {border-bottom: 1px solid #ADADAD; background-color: #EEEEEE;}")
         self.setObjectName("topFrame")

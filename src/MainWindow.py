@@ -2,12 +2,13 @@ from PySide.QtGui import QWidget, QVBoxLayout, QMainWindow, QStatusBar, QHBoxLay
 from PySide.QtCore import QProcess
 from TopFrame import TopFrame
 from MetadataWidget import MetadataWidget
+from FileListTable import FileListTable, FileListModel
 
 class MainWindow(QMainWindow):
     """Main Windows of the Application"""
 
     def __init__(self):
-        """Constructor of the class. Sets all the settings and initializes all of the components"""
+        """Constructor of the class. Sets all the settings and initializes all the components"""
         super().__init__()
         self.fileList = []
         self.setWindowTitle("PyRus")
@@ -54,7 +55,11 @@ class MainWindow(QMainWindow):
         #Top frame
         self.topFrame = TopFrame()
         self.leftLayout.addWidget(self.topFrame)
-        self.leftLayout.addStretch()
+        
+        #File List Table
+        self.fileListTable = FileListTable()
+        self.fileListTable.setModel(FileListModel(self.fileList))
+        self.leftLayout.addWidget(self.fileListTable)
 
         
         """
