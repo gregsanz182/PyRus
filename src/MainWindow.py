@@ -1,28 +1,29 @@
-import sys, os
-from PySide.QtGui import *
-from PySide.QtCore import *
-from FileAudio import FileAudio
-from FileMP3 import *
-from FileAAC import *
-from FileListModel import *
-from MetadataWidget import *
+from PySide.QtGui import QWidget, QVBoxLayout, QMainWindow, QStatusBar, QHBoxLayout
+from PySide.QtCore import QProcess
+from TopFrame import TopFrame
+from MetadataWidget import MetadataWidget
 
 class MainWindow(QMainWindow):
+    """Main Windows of the Application"""
 
     def __init__(self):
+        """Constructor of the class. Sets all the settings and initializes all of the components"""
         super().__init__()
         self.fileList = []
         self.setWindowTitle("PyRus")
+
+        #Minimun size of the Window
         self.setMinimumWidth(1280)
         self.setMinimumHeight(720)
 
         self.createStatusBar()
         self.createCentralWidget()
+
         self.pro = QProcess()
         
 
     def createStatusBar(self):
-        """Function to create the Status Bar"""
+        """Creates and sets the Status Bar of the Window"""
         self.stBar = QStatusBar()
         self.stBar.showMessage('Ready')
         self.setStatusBar(self.stBar)
@@ -32,17 +33,31 @@ class MainWindow(QMainWindow):
 
     def createCentralWidget(self):
         """Creates the central Widget of the window and all of its components"""
-
         #Central Widget
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
-        self.centralWidgetLayout = QGridLayout()
+
+        #Layout of the Central Widget
+        self.centralWidgetLayout = QHBoxLayout(self.centralWidget)
         self.centralWidgetLayout.setContentsMargins(0, 0, 0, 0)
         self.centralWidgetLayout.setSpacing(0)
+
+        #Layout of the left side of the Central Widget
+        self.leftLayout = QVBoxLayout()
+        self.leftLayout.setContentsMargins(0, 0, 0, 0)
+        self.centralWidgetLayout.addLayout(self.leftLayout)
+
+        #MetadataFrame or right side of  the Central Widget
+        self.metadataWidget = MetadataWidget()
+        self.centralWidgetLayout.addWidget(self.metadataWidget)
         
         #Top frame
-        self.createTopFrame()
+        self.topFrame = TopFrame()
+        self.leftLayout.addWidget(self.topFrame)
+        self.leftLayout.addStretch()
 
+        
+        """
         #Central panel
         self.centerLayout = QGridLayout()
         self.centerLayout.setContentsMargins(0, 0, 0, 0)
@@ -80,52 +95,7 @@ class MainWindow(QMainWindow):
         self.centralWidgetLayout.addLayout(self.centerLayout, 1, 0)
 
         
-        self.centralWidget.setLayout(self.centralWidgetLayout)
-
-    def createTopFrame(self):
-        """Creates de Top Frame and all of its components"""
-        self.topFrame = QFrame()
-        self.topFrame.setStyleSheet("QFrame#topFrame {border-bottom: 1px solid #ADADAD; background-color: #EEEEEE;}")
-        self.topFrame.setObjectName("topFrame")
-        self.topFrame.setMaximumHeight(35)
-        self.centralWidgetLayout.addWidget(self.topFrame, 0, 0)
-        self.topFrameLayout = QHBoxLayout(self.topFrame)
-        self.topFrameLayout.setContentsMargins(5, 3, 5, 3)
-
-        self.addFileButton = QToolButton()
-        self.addFileButton.setText("Add file...")
-        self.addFileButton.setIcon(QIcon("resources//imgs//addFileIcon.png"))
-        self.addFileButton.setMinimumHeight(27)
-        self.addFileButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.topFrameLayout.addWidget(self.addFileButton)
-        self.addFileButton.clicked.connect(self.addFiles)
-
-        self.addFolderButton = QToolButton()
-        self.addFolderButton.setText("Add folder...")
-        self.addFolderButton.setIcon(QIcon("resources//imgs//addFolderIcon.png"))
-        self.addFolderButton.setMinimumHeight(27)
-        self.addFolderButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.topFrameLayout.addWidget(self.addFolderButton)
-        self.addFolderButton.clicked.connect(self.addFolder)
-
-        self.optionFormatLayout = QHBoxLayout()
-        self.optionFormatLayout.setAlignment(Qt.AlignRight)
-
-        self.formatListBox = QComboBox()
-        self.formatListBox.setMinimumHeight(27)
-        self.formatListBox.setEditable(True)
-        self.formatListBox.addItem(".mp3")
-        self.formatListBox.addItem(".m4a")
-        self.formatListBox.addItem(".flac")
-
-        self.optionFormatLayout.addWidget(self.formatListBox)
-
-        self.topFrameLayout.addLayout(self.optionFormatLayout)
-
-    def createMetadataFrame(self):
-        self.metadataWidget = MetadataWidget()
-        self.metadataWidget.changesSaved.connect(self.updateModel)
-        self.centerLayout.addWidget(self.metadataWidget, 0, 1)
+        self.centralWidget.setLayout(self.centralWidgetLayout)"""
 
     def updateModel(self):
         indexes = self.fileListSelectionModel.selectedIndexes()

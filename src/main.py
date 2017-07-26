@@ -3,6 +3,7 @@ from PySide.QtGui import *
 from MainWindow import *
 
 if __name__ == '__main__':
+    """Main function of the program"""
     try:
         mainApp = QApplication(sys.argv)
         
