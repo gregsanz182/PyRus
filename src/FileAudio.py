@@ -1,5 +1,7 @@
-from PySide.QtCore import QProcess, QIODevice, QFile, QByteArray
+from PySide.QtCore import QProcess, QIODevice, QFile, QByteArray, Qt, QCryptographicHash
+from PySide.QtGui import QPixmap
 from os import path
+import hashlib
 
 class FileAudio():
 
@@ -19,7 +21,7 @@ class FileAudio():
         self.metadata["<comment>"] = metaInfo["General"].get("Comment")
         self.metadata["<bitrate>"] = metaInfo["Audio"].get("Bit rate")
         self.metadata["<bitratemode>"] = metaInfo["Audio"].get("Bit rate mode")
-        self.metadata["<coverfile>"] = self.getAlbumCover(metaInfo)
+        self.metadata["<coverfile>"], self.metadata["<covermime>"] = self.getAlbumCover(metaInfo)
         self.metadata["<lyrics>"] = metaInfo["General"].get("Lyrics")
         self.metadata["<lenght>"] = metaInfo["Audio"].get("Duration")
         self.metadata["<filename>"] = path.basename(self.metadata["<path>"])
@@ -37,9 +39,7 @@ class FileAudio():
             if process.canReadLine():
                 cad = process.readLine()
                 byte = QByteArray.fromBase64(cad)
-                name = str(cad)[:60]
-                name = "".join(c for c in name if c.isalnum() or c == ' ')
-                name += self.metadata["<album>"][:10]
+                name = self.getSHA1FromBytes(byte)
                 if coverFormat == "image/jpeg":
                     name += ".jpg"
                 elif coverFormat == "image/png":
@@ -50,8 +50,8 @@ class FileAudio():
                 f.open(QIODevice.WriteOnly)
                 f.write(byte)
                 f.close()
-                return name
-        return None
+                return name, coverFormat
+        return None, None
 
     def getTagsValue(self, stringText):
         st = stringText[:]
@@ -59,3 +59,25 @@ class FileAudio():
             st = st.replace(tag, value)
 
         return st
+
+    def getCoverWithInfo(self):
+        if self.metadata["<coverfile>"] is not None:
+            pixmap = QPixmap(self.metadata["<coverfile>"])
+            detail = "{0}x{1}".format(pixmap.width(), pixmap.height())
+            if self.metadata["<covermime>"] is not None:
+                detail += "   {0}".format(self.metadata["<covermime>"])
+            detail += "   {:.1f} KB".format(path.getsize(self.metadata["<coverfile>"])/1024)
+            return (pixmap, detail)
+        return None, "No cover available"
+
+    def getMD5FromFile(self, fileName):
+        f = QFile(fileName)
+        f.open(QIODevice.ReadOnly)
+        byte = f.readAll()
+        f.close()
+        return getSHA1FromBytes(byte)
+
+    def getSHA1FromBytes(self, data):
+        hash_sha1 = QCryptographicHash(QCryptographicHash.Sha1)
+        hash_sha1.addData(data)
+        return str(QByteArray.toHex(hash_sha1.result()))

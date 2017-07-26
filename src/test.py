@@ -2,59 +2,32 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import base64
 import sys
+import hashlib
 
-class MyModel(QAbstractTableModel):
+class MyModel(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.items = 0
-        self.header = ["Head 1", "Head 2", "Head 3"]
-        self.timer = QTimer()
-        self.timer.setInterval(1000)
-        self.timer.timeout.connect(self.timerHit)
-        self.timer.start()
+        self.setMinimumWidth(1280)
+        self.setMinimumHeight(720)
+        self.pix = QPixmap("nocover.png")
+        self.label = QLabel()
+        self.label.setPixmap(self.pix.scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.este = QVBoxLayout()
+        self.setLayout(self.este)
+        self.este.addWidget(self.label)
+        self.este.addStretch()
 
-    def timerHit(self):
-        topLeft = self.createIndex(2, 1)
-        self.insertRow(0)
-        #self.dataChanged.emit(topLeft, topLeft)
-
-    def rowCount(self, parent):
-        return 5
-
-    def columnCount(self, parent):
-        return 10
-
-    def data(self, index, role):
-        if index.row() == 2 and index.column() == 1 and role == Qt.DisplayRole:
-            return QTime.currentTime()
-        return None
-
-    def headerData(self, section, orientation, role):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-            for i in range(10):
-                if section == i:
-                    return "Header " + str(i)
-
-        return None
-
-    def insertRows(self, row, count, parent):
-        self.beginInsertRows(QModelIndex(), row, row + count - 1)
-        self.endInsertRows()
-        return True
-
-"""if __name__ == "__main__":
-    try:
+if __name__ == "__main__":
+    hash_md5 = hashlib.md5()
+    with open("nocover.png", "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    print(hash_md5.hexdigest())
+    """try:
         mainApp = QApplication(sys.argv)
 
-        myModel = MyModel()
-        
-        mainWindow = QTableView()
-        mainWindow.setModel(myModel)
-        mainWindow.verticalHeader().setDefaultSectionSize(20)
-        mainWindow.horizontalHeader().setMovable(True)
-        mainWindow.setWindowTitle("Table test")
-        mainWindow.setGeometry(640, 480, 500, 500)
+        mainWindow = MyModel()
         mainWindow.show()
 
         mainApp.exec_()
@@ -66,23 +39,4 @@ class MyModel(QAbstractTableModel):
     except Exception:
         print(sys.exc_info()[1])"""
 
-if __name__ == "__main__":
-    d = {"<artist>": "Hola", "<cadena>": "HolaC", "<cadena2>": "HolaC2"}
-    stringText = "<artist><cadena>estosinoesnada<cadena2>"
-    stack = []
-    tags = []
-    flag = False
-    for c in stringText:
-        if c == '<' or flag == True:
-            stack.append(c)
-            if c == '>':
-                tags.append("".join(stack))
-                stack.clear()
-                flag = False
-            else:
-                flag = True
 
-    for tag, value in d.items():
-        stringText = stringText.replace(tag, value)
-
-    print(stringText)

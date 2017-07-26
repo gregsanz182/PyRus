@@ -1,5 +1,6 @@
 from PySide.QtGui import *
 from PySide.QtCore import *
+from os import path
 
 class MetadataWidget(QFrame):
 
@@ -9,10 +10,15 @@ class MetadataWidget(QFrame):
         super().__init__(parent)
         self.setStyleSheet("QFrame#metadataWidget{border-left: 1px solid #ADADAD; background-color: #EEEEEE;}")
         self.setObjectName("metadataWidget")
-        self.setFixedWidth(280)
+        self.setFixedWidth(320)
         self.listIndexed = []
 
         self.metadataLayout = MetadataLayout(self)
+
+        self.coverWidget = MetadataCoverWidget()
+        self.metadataLayout.addWidget(self.coverWidget)
+        self.metadataLayout.addSpacing(5)
+        self.metadataLayout.addSeparator()
 
         self.titleLabel = QLabel("Title")
         self.titleBox = MetadataTextField("<title>")
@@ -87,6 +93,7 @@ class MetadataWidget(QFrame):
             self.trackBox.setFieldText(self.listIndexed)
             self.discBox.setFieldText(self.listIndexed)
             self.commentBox.setFieldText(self.listIndexed)
+            self.coverWidget.setCover(self.listIndexed)
         else:
             self.listIndexed.clear()
             self.titleBox.clear()
@@ -98,6 +105,7 @@ class MetadataWidget(QFrame):
             self.trackBox.clear()
             self.discBox.clear()
             self.commentBox.clear()
+            self.coverWidget.setNoCover()
 
     def saveChanges(self):
         for item in self.listIndexed:
@@ -113,6 +121,66 @@ class MetadataWidget(QFrame):
 
         self.changesSaved.emit()
 
+class MetadataCoverWidget(QWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+
+        self.coverLabel = QLabel()
+        #self.coverLabel.setFixedSize(QSize(125, 125))
+        self.coverLabel.setStyleSheet("QLabel#coverLabel {border: 1px solid #ADADAD; background-color: #FFFFFF;}")
+        self.coverLabel.setObjectName("coverLabel")
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setColor(QColor("#CCCCCC"))
+        shadow.setOffset(2, 2)
+        shadow.setBlurRadius(15)
+        self.coverLabel.setGraphicsEffect(shadow)
+        self.defaultCover = QPixmap("resources//imgs//nocover.png").scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        self.layout.addWidget(self.coverLabel, alignment=Qt.AlignHCenter)
+        self.layout.addSpacing(3)
+
+        self.detailLabel = QLabel("")
+        self.layout.addWidget(self.detailLabel, alignment=Qt.AlignHCenter)
+        self.layout.addSpacing(5)
+        
+        self.setButtons()
+
+        self.setNoCover()
+
+    def setCover(self, listIndexed):
+        coverSet = set(item.metadata["<coverfile>"] for item in listIndexed)
+        if len(coverSet) > 1:
+            self.coverLabel.setPixmap(self.defaultCover)
+            self.detailLabel.setText("Covers varies")
+        else:
+            pixmap, detail = listIndexed[0].getCoverWithInfo()
+            if pixmap is None:
+                self.coverLabel.setPixmap(self.defaultCover)
+            else:
+                self.coverLabel.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.detailLabel.setText(detail)
+
+    def setNoCover(self):
+        self.coverLabel.setPixmap(self.defaultCover)
+        self.detailLabel.setText("")
+
+    def setButtons(self):
+        self.changeButton = QPushButton("Change...")
+        self.removeButton = QPushButton("Remove...")
+        self.exportButton = QPushButton("Export...")
+
+        self.buttonsLayout = QHBoxLayout()
+        self.buttonsLayout.setSpacing(10)
+        self.buttonsLayout.setContentsMargins(10, 0,10, 0)
+        self.layout.addLayout(self.buttonsLayout)
+
+        self.buttonsLayout.addWidget(self.changeButton)
+        self.buttonsLayout.addWidget(self.removeButton)
+        self.buttonsLayout.addWidget(self.exportButton)
+
 class MetadataLayout(QVBoxLayout):
 
     def __init__(self, parent=None):
@@ -122,6 +190,14 @@ class MetadataLayout(QVBoxLayout):
     def addField(self, label=None, widgetField=None):
         self.addWidget(label)
         self.addWidget(widgetField)
+        self.addSpacing(5)
+
+    def addSeparator(self):
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setFrameShadow(QFrame.Sunken)
+        self.addSpacing(5)
+        self.addWidget(separator)
         self.addSpacing(5)
 
 class MetadataFractionField(QWidget):
