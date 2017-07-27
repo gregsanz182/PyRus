@@ -27,7 +27,6 @@ class MainWindow(QMainWindow):
         self.makeConections()
 
         self.pro = QProcess()
-        
 
     def createStatusBar(self):
         """Creates and sets the Status Bar of the Window"""
@@ -63,82 +62,21 @@ class MainWindow(QMainWindow):
         self.leftLayout.addWidget(self.topFrame)
         
         #File List Table
-        self.fileListTable = FileListTable()
-        self.fileListTable.setModel(FileListModel(self.fileList))
+        self.fileListTable = FileListTable(self.fileList)
         self.leftLayout.addWidget(self.fileListTable)
 
         #Bottom Frame
         self.bottomFrame = BottomFrame()
         self.leftLayout.addWidget(self.bottomFrame)
 
-        
-        """
-        #Central panel
-        self.centerLayout = QGridLayout()
-        self.centerLayout.setContentsMargins(0, 0, 0, 0)
-        self.centerLayout.setSpacing(0)
-        
-        #Left Panel
-        self.centerLeftLayout = QGridLayout()
-        self.centerLayout.addLayout(self.centerLeftLayout, 0, 0)
-        
-        self.createFileListTable()
-
-        self.acceptPanel = QFrame()
-        self.acceptPanel.setStyleSheet("QFrame#acceptPanel {border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
-        self.acceptPanel.setObjectName("acceptPanel")
-        self.acceptPanel.setMaximumHeight(65)
-        self.centerLeftLayout.addWidget(self.acceptPanel, 1, 0)
-        self.acceptPanelLayout = QGridLayout(self.acceptPanel)
-        self.acceptPanelLayout.setContentsMargins(13, 0, 10, 0)
-
-        
-        self.startButton = QToolButton()
-        self.startButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        self.startButton.setText("Start")
-        self.startButton.setMinimumHeight(57)
-        self.startButton.setStyleSheet("QToolButton#startButton {padding-left: 13px; padding-right: 13px;}")
-        self.startButton.setObjectName("startButton")
-        self.startButton.setIcon(QIcon("resources//imgs//startConvert.png"))
-        self.startButton.setIconSize(QSize(59, 29))
-        self.acceptPanelLayout.addWidget(self.startButton, 0, 3)
-
-        self.acceptPanelLayout.addWidget(QWidget(), 0, 0)
-    
-        #Metadata panel
-        self.createMetadataFrame()
-        self.centralWidgetLayout.addLayout(self.centerLayout, 1, 0)
-
-        
-        self.centralWidget.setLayout(self.centralWidgetLayout)"""
-
     def makeConections(self):
         """Makes the connections between the signals and slots of the application components."""
         self.topFrame.addFileButton.clicked.connect(self.addFiles)
+        self.fileListTable.selectionHasChanged.connect(self.metadataFrame.setFieldValues)
 
     def updateModel(self):
         indexes = self.fileListSelectionModel.selectedIndexes()
         self.fileListModel.dataChanged.emit(indexes[0], indexes[len(indexes)-1])
-
-    def createFileListTable(self):
-        self.fileListTable = QTableView()
-        self.fileListModel = FileListModel(self.fileList)
-        self.fileListTable.setModel(self.fileListModel)
-        self.fileListTable.verticalHeader().setDefaultSectionSize(20)
-        self.fileListTable.setStyleSheet("QTableView#fileListTable {border: 0px;}")
-        self.fileListTable.setObjectName("fileListTable")
-        self.fileListTable.horizontalHeader().setMovable(True)
-        self.fileListTable.horizontalHeader().setHighlightSections(False)
-        self.fileListTable.setColumnWidth(1, 50)
-        self.fileListTable.setShowGrid(False)
-        self.fileListTable.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.fileListSelectionModel = self.fileListTable.selectionModel()
-        self.fileListSelectionModel.selectionChanged.connect(self.changeMetadataWidgetValues)
-        self.centerLeftLayout.addWidget(self.fileListTable, 0, 0)
-
-    def changeMetadataWidgetValues(self, selected, deselected):
-        indexes = self.fileListSelectionModel.selectedRows()
-        self.metadataWidget.setFieldValues(self.fileList, indexes)
 
     def addFiles(self):
         """Opens a QFileDialog and imports the selected files.
@@ -182,7 +120,7 @@ class MainWindow(QMainWindow):
             self.fileList.append(FileAAC(metaInfo))
         else:
             return False
-        self.fileListTable.model().insertRow(0)
+        self.fileListTable.insertRow()
 
         return True
 

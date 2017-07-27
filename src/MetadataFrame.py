@@ -1,5 +1,6 @@
-from PySide.QtGui import *
-from PySide.QtCore import *
+from PySide.QtGui import QLabel, QFrame, QComboBox, QPushButton, QWidget, QGraphicsDropShadowEffect, \
+QHBoxLayout, QVBoxLayout, QColor, QPixmap
+from PySide.QtCore import Qt, QSize
 from os import path
 
 class MetadataFrame(QFrame):
@@ -84,8 +85,9 @@ class MetadataFrame(QFrame):
         self.metadataLayout.addWidget(self.saveChangesButton)
 
 
-    def setFieldValues(self, listFiles, indexes):
-        """Sets the values of all the fields given the 'listFiles' and the index of the items selected"""
+    def setFieldValues(self, indexes, listFiles):
+        """Sets the values of all the fields given the index of the items selected.
+        Needs the file list to get the data of the files"""
         if len(indexes) > 0:
             self.listIndexed = [listFiles[index.row()] for index in indexes] 
             self.titleBox.setFieldText(self.listIndexed)

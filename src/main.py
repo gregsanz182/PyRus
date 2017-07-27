@@ -1,6 +1,6 @@
 import sys
-from PySide.QtGui import *
-from MainWindow import *
+from PySide.QtGui import QApplication
+from MainWindow import MainWindow
 
 if __name__ == '__main__':
     """Main function of the program"""
@@ -18,4 +18,3 @@ if __name__ == '__main__':
         print("Closing window...")
     except Exception:
         print(sys.exc_info()[1])
-

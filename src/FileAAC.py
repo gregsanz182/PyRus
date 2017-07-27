@@ -1,4 +1,4 @@
-from FileAudio import *
+from FileAudio import FileAudio
 
 class FileAAC (FileAudio):
 

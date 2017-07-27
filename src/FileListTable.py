@@ -1,12 +1,16 @@
 from PySide.QtGui import QTableView, QAbstractItemView, QBrush, QColor
-from PySide.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PySide.QtCore import QAbstractTableModel, Qt, QModelIndex, Signal
 
 class FileListTable(QTableView):
     """Table that contains the List of Files to convert. Provides information and details about the files in the list"""
 
-    def __init__(self, parent=None):
-        """Constructor of the class. Initializes and sets all the components"""
+    selectionHasChanged = Signal(list, list)
+
+    def __init__(self, fileList=list(), parent=None):
+        """Constructor of the class. Initializes and sets all the components.
+        Recieves the list of files."""
         super().__init__(parent)
+        self.fileList = fileList
         self.verticalHeader().setDefaultSectionSize(20)
         self.setStyleSheet("QTableView#fileListTable {border: 0px;}")
         self.setObjectName("fileListTable")
@@ -14,6 +18,21 @@ class FileListTable(QTableView):
         self.horizontalHeader().setHighlightSections(False)
         self.setShowGrid(False)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setModel(FileListModel(self.fileList))
+        self.modelSelection = self.selectionModel()
+        self.modelSelection.selectionChanged.connect(self.selectionChangedHandle)
+
+    def selectionChangedHandle(self):
+        """Handles the 'selectionChanged' emited signal and emits 
+        selectionHasChanged signal with fileList and the index 
+        of selected the items"""
+        indexes = self.modelSelection.selectedRows()
+        self.selectionHasChanged.emit(indexes, self.fileList)
+
+    def insertRow(self):
+        """Inserts a single row"""
+        self.model().insertSingleRow()
+
 
 class FileListModel(QAbstractTableModel):
     """Model that represents the data of the FileListTable"""
@@ -29,11 +48,11 @@ class FileListModel(QAbstractTableModel):
         """Sets the File List for the Model"""
         self.list = fileList
 
-    def rowCount(self, parent):
+    def rowCount(self, parent=QModelIndex()):
         """Overrides the parent method. Returns the total rows of the model"""
         return len(self.list)
 
-    def columnCount(self, parent):
+    def columnCount(self, parent=QModelIndex()):
         """Overrides the parent method. Returns the total columns of the model"""
         return len(self.header)
 
@@ -52,8 +71,9 @@ class FileListModel(QAbstractTableModel):
         return None
 
     def headerData(self, section, orientation, role):
-        """Overrides the parent method. 
-        Returns the data for the given role and section in the header with the specified orientation."""
+        """Overrides the parent method.
+        Returns the data for the given role and section in the header
+        with the specified orientation."""
         if orientation == Qt.Horizontal:
             if role == Qt.DisplayRole:
                 return self.header[section]
@@ -62,10 +82,9 @@ class FileListModel(QAbstractTableModel):
 
         return None
 
-    def insertRows(self, row, count, parent):
-        """Overrides the parent method.
-        Inserts count rows into the model before the given row."""
-        self.beginInsertRows(QModelIndex(), row, row + count - 1)
+    def insertSingleRow(self):
+        """Inserts a single row to the model."""
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self.endInsertRows()
         return True
     
