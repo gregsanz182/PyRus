@@ -2,7 +2,7 @@ from PySide.QtGui import QWidget, QVBoxLayout, QMainWindow, QStatusBar, QHBoxLay
 QFileDialog, QProgressDialog
 from PySide.QtCore import QProcess, Qt
 from TopFrame import TopFrame
-from MetadataWidget import MetadataWidget
+from MetadataFrame import MetadataFrame
 from FileListTable import FileListTable, FileListModel
 from BottomFrame import BottomFrame
 from FileMP3 import FileMP3
@@ -55,8 +55,8 @@ class MainWindow(QMainWindow):
         self.centralWidgetLayout.addLayout(self.leftLayout)
 
         #MetadataFrame or right side of  the Central Widget
-        self.metadataWidget = MetadataWidget()
-        self.centralWidgetLayout.addWidget(self.metadataWidget)
+        self.metadataFrame = MetadataFrame()
+        self.centralWidgetLayout.addWidget(self.metadataFrame)
         
         #Top frame
         self.topFrame = TopFrame()

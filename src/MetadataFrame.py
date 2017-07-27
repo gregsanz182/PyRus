@@ -2,14 +2,17 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from os import path
 
-class MetadataWidget(QFrame):
+class MetadataFrame(QFrame):
+    """Metadata Frame of the application. Provides fields that shows details of the files selected,
+    and allows the managing of the tags. Here, the user can modify the tags of the files selected."""
 
     changesSaved = Signal()
 
     def __init__(self, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
-        self.setStyleSheet("QFrame#metadataWidget{border-left: 1px solid #ADADAD; background-color: #EEEEEE;}")
-        self.setObjectName("metadataWidget")
+        self.setStyleSheet("QFrame#metadataFrame{border-left: 1px solid #ADADAD; background-color: #EEEEEE;}")
+        self.setObjectName("metadataFrame")
         self.setFixedWidth(320)
         self.listIndexed = []
 
@@ -82,6 +85,7 @@ class MetadataWidget(QFrame):
 
 
     def setFieldValues(self, listFiles, indexes):
+        """Sets the values of all the fields given the 'listFiles' and the index of the items selected"""
         if len(indexes) > 0:
             self.listIndexed = [listFiles[index.row()] for index in indexes] 
             self.titleBox.setFieldText(self.listIndexed)
@@ -108,6 +112,7 @@ class MetadataWidget(QFrame):
             self.coverWidget.setNoCover()
 
     def saveChanges(self):
+        """Save the changes in the list and emits the signal 'changesSaved'"""
         for item in self.listIndexed:
             self.titleBox.setTextToMetadata(item)
             self.artistBox.setTextToMetadata(item)
@@ -122,14 +127,17 @@ class MetadataWidget(QFrame):
         self.changesSaved.emit()
 
 class MetadataCoverWidget(QWidget):
+    """Widget that provides a QLabel for showing the cover of the file selected and buttons for
+    change, remove and export cover"""
 
     def __init__(self, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
         self.coverLabel = QLabel()
-        #self.coverLabel.setFixedSize(QSize(125, 125))
+        self.coverLabel.setFixedSize(QSize(150, 150))
         self.coverLabel.setStyleSheet("QLabel#coverLabel {border: 1px solid #ADADAD; background-color: #FFFFFF;}")
         self.coverLabel.setObjectName("coverLabel")
         shadow = QGraphicsDropShadowEffect(self)
@@ -151,6 +159,7 @@ class MetadataCoverWidget(QWidget):
         self.setNoCover()
 
     def setCover(self, listIndexed):
+        """Sets the cover (of the files selected) in the coverLabel for showing"""
         coverSet = set(item.metadata["<coverfile>"] for item in listIndexed)
         if len(coverSet) > 1:
             self.coverLabel.setPixmap(self.defaultCover)
@@ -164,10 +173,12 @@ class MetadataCoverWidget(QWidget):
             self.detailLabel.setText(detail)
 
     def setNoCover(self):
+        """Sets the default cover"""
         self.coverLabel.setPixmap(self.defaultCover)
         self.detailLabel.setText("")
 
     def setButtons(self):
+        """Initializes and sets the buttons corresponding to 'change', 'remove' and 'export' functionalities"""
         self.changeButton = QPushButton("Change...")
         self.removeButton = QPushButton("Remove...")
         self.exportButton = QPushButton("Export...")
@@ -182,17 +193,22 @@ class MetadataCoverWidget(QWidget):
         self.buttonsLayout.addWidget(self.exportButton)
 
 class MetadataLayout(QVBoxLayout):
+    """Custom Layout of the MetadataFrame. Arranges every item like a form, but with label above the text field.
+    Extends QVBoxLayout"""
 
     def __init__(self, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.setSpacing(2)
 
     def addField(self, label=None, widgetField=None):
+        """Adds the given label and widget in the layout"""
         self.addWidget(label)
         self.addWidget(widgetField)
         self.addSpacing(5)
 
     def addSeparator(self):
+        """Adds a separator to the layout"""
         separator = QFrame()
         separator.setFrameShape(QFrame.HLine)
         separator.setFrameShadow(QFrame.Sunken)
@@ -201,8 +217,10 @@ class MetadataLayout(QVBoxLayout):
         self.addSpacing(5)
 
 class MetadataFractionField(QWidget):
+    """A Custom field consisting of two QComboBox and a slash between them."""
 
     def __init__(self, metadataItem1=None, metadataItem2=None, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.leftBox = MetadataTextField(metadataItem1)
         self.rightBox = MetadataTextField(metadataItem2)
@@ -217,25 +235,32 @@ class MetadataFractionField(QWidget):
         self.layout.addWidget(self.rightBox)
 
     def setTextToMetadata(self, item):
+        """Sets the current text in the fields to the metadata of the file list"""
         self.leftBox.setTextToMetadata(item)
         self.rightBox.setTextToMetadata(item)
 
     def setFieldText(self, listIndexed):
+        """Sets the metadata values in the fields"""
         self.leftBox.setFieldText(listIndexed)
         self.rightBox.setFieldText(listIndexed)
 
     def clear(self):
+        """Cleans the Combo boxes"""
         self.leftBox.clear()
         self.rightBox.clear()
 
 class MetadataTextField(QComboBox):
+    """A Custom QComboBox for the display and editing of the values in the metadata of the fileList"""
 
     def __init__(self, metadataItem=None, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.setEditable(True)
         self.metadataItem = metadataItem
 
     def setFieldText(self, listIndexed):
+        """Sets the value of the tags in listIndexed to the fields.
+        If values varies, '< keep >' is set"""
         textSet = set([item.metadata[self.metadataItem] for item in listIndexed])
         self.updateList(textSet)
         if len(textSet) > 1:
@@ -245,11 +270,13 @@ class MetadataTextField(QComboBox):
         self.lineEdit().setCursorPosition(0)
 
     def obtainTextValue(self, textSet):
+        """Returns either '< keep >' or the tags value depending on the simililarities of the content"""
         if len(textSet) > 1:
             return "< keep >"
         return list(textSet)[0]
 
     def updateList(self, textSet):
+        """Updates the list of the QComboBox with the values of the selected items"""
         textList = ["< delete >", "< keep >"]
         if None in textSet:
             textSet.remove(None)
@@ -261,6 +288,7 @@ class MetadataTextField(QComboBox):
         self.addItems(textList)
 
     def setTextToMetadata(self, item):
+        """Sets the current value of 'item' in the metadata tags of the file"""
         if self.metadataItem is not None:
             if self.currentText() != "< keep >":
                 if self.currentText() == "< delete >":
