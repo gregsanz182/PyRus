@@ -1,5 +1,5 @@
-from PySide.QtGui import QTableView, QAbstractItemView
-from PySide.QtCore import QAbstractTableModel, Qt
+from PySide.QtGui import QTableView, QAbstractItemView, QBrush, QColor
+from PySide.QtCore import QAbstractTableModel, Qt, QModelIndex
 
 class FileListTable(QTableView):
     """Table that contains the List of Files to convert. Provides information and details about the files in the list"""

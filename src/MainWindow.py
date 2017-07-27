@@ -1,8 +1,13 @@
-from PySide.QtGui import QWidget, QVBoxLayout, QMainWindow, QStatusBar, QHBoxLayout
-from PySide.QtCore import QProcess
+from PySide.QtGui import QWidget, QVBoxLayout, QMainWindow, QStatusBar, QHBoxLayout, \
+QFileDialog, QProgressDialog
+from PySide.QtCore import QProcess, Qt
 from TopFrame import TopFrame
 from MetadataWidget import MetadataWidget
 from FileListTable import FileListTable, FileListModel
+from BottomFrame import BottomFrame
+from FileMP3 import FileMP3
+from FileAAC import FileAAC
+import os
 
 class MainWindow(QMainWindow):
     """Main Windows of the Application"""
@@ -19,6 +24,7 @@ class MainWindow(QMainWindow):
 
         self.createStatusBar()
         self.createCentralWidget()
+        self.makeConections()
 
         self.pro = QProcess()
         
@@ -61,6 +67,10 @@ class MainWindow(QMainWindow):
         self.fileListTable.setModel(FileListModel(self.fileList))
         self.leftLayout.addWidget(self.fileListTable)
 
+        #Bottom Frame
+        self.bottomFrame = BottomFrame()
+        self.leftLayout.addWidget(self.bottomFrame)
+
         
         """
         #Central panel
@@ -102,6 +112,10 @@ class MainWindow(QMainWindow):
         
         self.centralWidget.setLayout(self.centralWidgetLayout)"""
 
+    def makeConections(self):
+        """Makes the connections between the signals and slots of the application components."""
+        self.topFrame.addFileButton.clicked.connect(self.addFiles)
+
     def updateModel(self):
         indexes = self.fileListSelectionModel.selectedIndexes()
         self.fileListModel.dataChanged.emit(indexes[0], indexes[len(indexes)-1])
@@ -127,6 +141,11 @@ class MainWindow(QMainWindow):
         self.metadataWidget.setFieldValues(self.fileList, indexes)
 
     def addFiles(self):
+        """Opens a QFileDialog and imports the selected files.
+        Provides a QProgressDialog that shows the progress of the operation.
+        Every file is sent to a method that analyse the file, and if it is
+        supported, it's being addded to the file list of the application. If it's not,
+        then it's ignored"""
         paths = QFileDialog.getOpenFileNames(self, "Add files", os.getcwd())
         if len(paths[0]) > 0:
             progressDialog = QProgressDialog("Adding files", "Cancel", 0, len(paths[0]), self)
@@ -141,6 +160,9 @@ class MainWindow(QMainWindow):
             progressDialog.close()
 
     def analyseAndAdd(self, pathFile):
+        """Analyzes the file in the pathFile with mediainfo CLI. This method selects the
+        appropriate format, adds the file to the list and returns True. if the file is not supported, then
+        returns False."""
         metaInfo = {}
         process = QProcess()
         process.start("resources/tools/mediainfo.exe", [pathFile])
