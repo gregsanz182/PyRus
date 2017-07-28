@@ -1,6 +1,6 @@
 from PySide.QtGui import QLabel, QFrame, QComboBox, QPushButton, QWidget, QGraphicsDropShadowEffect, \
 QHBoxLayout, QVBoxLayout, QColor, QPixmap
-from PySide.QtCore import Qt, QSize
+from PySide.QtCore import Qt, QSize, Signal
 from os import path
 
 class MetadataFrame(QFrame):
@@ -136,7 +136,7 @@ class MetadataCoverWidget(QWidget):
         """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(0, 10, 0, 0)
 
         self.coverLabel = QLabel()
         self.coverLabel.setFixedSize(QSize(150, 150))

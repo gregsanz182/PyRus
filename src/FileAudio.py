@@ -4,8 +4,10 @@ from os import path
 import hashlib
 
 class FileAudio():
+    """Represents the Audio Files. Contains all the metadata. This class is inherited by the Files Format Classes"""
 
     def __init__(self, metaInfo):
+    """Constructor of the class. Initializes and sets all the components."""
         self.metadata = {}
         self.metadata["<path>"] = metaInfo["General"]["Complete name"]
         self.metadata["<title>"] = metaInfo["General"].get("Track name")
@@ -27,10 +29,14 @@ class FileAudio():
         self.metadata["<filename>"] = path.basename(self.metadata["<path>"])
 
     def printTags(self):
+        """Prints of all the available tags"""
         for key, value in self.metadata.items():
             print("{0}: {1}".format(key, value))
 
     def getAlbumCover(self, metaInfo):
+        """If the file contains a cover, this method extract it and save it to a temporarily 
+        location with its hash code as the file name.
+        Returns a tuple containing the filename of the cover art, and MIME type of the cover"""
         if "Cover" in metaInfo["General"] and metaInfo["General"]["Cover"] == "Yes":
             coverFormat = metaInfo["General"].get("Cover MIME")
             process = QProcess()
@@ -54,13 +60,18 @@ class FileAudio():
         return None, None
 
     def getTagsValue(self, stringText):
+        """Given the string 'stringText', returns the values of the tags presented in the string"""
         st = stringText[:]
         for tag, value in self.metadata.items():
-            st = st.replace(tag, value)
+            if value is None:
+                st = st.replace("/"+str(tag), "")
+            else:
+                st = st.replace(tag, value)
 
         return st
 
     def getCoverWithInfo(self):
+        """Returns tuple containing a QPixmap with the cover of the file and de details about it"""
         if self.metadata["<coverfile>"] is not None:
             pixmap = QPixmap(self.metadata["<coverfile>"])
             detail = "{0}x{1}".format(pixmap.width(), pixmap.height())
@@ -71,6 +82,8 @@ class FileAudio():
         return None, "No cover available"
 
     def getMD5FromFile(self, fileName):
+        """This method is not currently working. Please use Carefuly.
+        Given the file name, returns a cryptographic hash SHA1 from the file"""
         f = QFile(fileName)
         f.open(QIODevice.ReadOnly)
         byte = f.readAll()
@@ -78,6 +91,7 @@ class FileAudio():
         return getSHA1FromBytes(byte)
 
     def getSHA1FromBytes(self, data):
+        """Given the data bytes, returns a Cryptographic Hash SHA1 of the data"""
         hash_sha1 = QCryptographicHash(QCryptographicHash.Sha1)
         hash_sha1.addData(data)
         return str(QByteArray.toHex(hash_sha1.result()))
