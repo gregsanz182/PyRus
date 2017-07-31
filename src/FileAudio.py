@@ -7,7 +7,7 @@ class FileAudio():
     """Represents the Audio Files. Contains all the metadata. This class is inherited by the Files Format Classes"""
 
     def __init__(self, metaInfo):
-    """Constructor of the class. Initializes and sets all the components."""
+        """Constructor of the class. Initializes and sets all the components."""
         self.metadata = {}
         self.metadata["<path>"] = metaInfo["General"]["Complete name"]
         self.metadata["<title>"] = metaInfo["General"].get("Track name")
@@ -41,7 +41,7 @@ class FileAudio():
             coverFormat = metaInfo["General"].get("Cover MIME")
             process = QProcess()
             process.start("resources/tools/mediainfo.exe", ["--Inform=file://resources/tools/art.txt", self.metadata["<path>"]])
-            process.waitForFinished();
+            process.waitForFinished()
             if process.canReadLine():
                 cad = process.readLine()
                 byte = QByteArray.fromBase64(cad)
@@ -65,6 +65,7 @@ class FileAudio():
         for tag, value in self.metadata.items():
             if value is None:
                 st = st.replace("/"+str(tag), "")
+                st = st.replace(str(tag), "")
             else:
                 st = st.replace(tag, value)
 
