@@ -11,7 +11,7 @@ class BottomFrame(QFrame):
         super().__init__(parent)
         self.setStyleSheet("QFrame#bottomFrame {border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
         self.setObjectName("bottomFrame")
-        self.setFixedHeight(160)
+        self.setFixedHeight(120)
         self.initComponents()
 
         self.layout = QHBoxLayout(self)

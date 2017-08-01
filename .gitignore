@@ -1,9 +1,5 @@
 .vscode/
 src/__pycache__/
-*db
-*exe
-*mp3
-*m4a
-*jpg
-*png
-*gif
+*.db
+*.mp3
+*.m4a

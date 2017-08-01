@@ -35,7 +35,7 @@ class VWidget(QWidget):
 
 class SwitchingWidget(QWidget):
 
-    def __init__(self, orientation=Qt.Horizontal, titleLabel="", parent=None):
+    def __init__(self, orientation=Qt.Horizontal, parent=None):
         super().__init__(parent)
         if orientation == Qt.Horizontal:
             self.layout = QHBoxLayout(self)
