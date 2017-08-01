@@ -1,7 +1,8 @@
 from PySide.QtGui import QLabel, QFrame, QComboBox, QPushButton, QWidget, QGraphicsDropShadowEffect, \
-QHBoxLayout, QVBoxLayout, QColor, QPixmap
+QHBoxLayout, QVBoxLayout, QColor, QPixmap, QSizePolicy
 from PySide.QtCore import Qt, QSize, Signal
 from os import path
+from GuiTools import ComboBox
 
 class MetadataFrame(QFrame):
     """Metadata Frame of the application. Provides fields that shows details of the files selected,
@@ -251,13 +252,14 @@ class MetadataFractionField(QWidget):
         self.leftBox.clear()
         self.rightBox.clear()
 
-class MetadataTextField(QComboBox):
+class MetadataTextField(ComboBox):
     """A Custom QComboBox for the display and editing of the values in the metadata of the fileList"""
 
     def __init__(self, metadataItem=None, parent=None):
         """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.setEditable(True)
+        self.setHorizontalSizePolicy(QSizePolicy.Preferred)
         self.metadataItem = metadataItem
 
     def setFieldText(self, listIndexed):
