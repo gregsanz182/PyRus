@@ -1,6 +1,7 @@
 from PySide.QtGui import QFrame, QVBoxLayout, QComboBox, QHBoxLayout, QStackedLayout, QStackedWidget, QSizePolicy
 from PySide.QtCore import Qt
 from EncoderMP3Tools import EncoderMP3Tools
+from EncoderFLACTools import EncoderFLACTools
 from GuiTools import SwitchingWidget
 
 class BottomFrame(QFrame):
@@ -21,11 +22,12 @@ class BottomFrame(QFrame):
 
     def initComponents(self):
         self.mp3tools = EncoderMP3Tools()
-        self.mp2tools = EncoderMP3Tools()
+        self.flactools = EncoderFLACTools()
         
     def setFormatWidget(self):
         self.sw = SwitchingWidget(Qt.Vertical)
         self.layout.addWidget(self.sw)
-        self.sw.addItem(self.mp3tools.formatNameByExtensions[".mp3"], self.mp3tools.preferencesWidget)
-        self.sw.addItem(".flac | Free Lossless Audio Codec", self.mp2tools.preferencesWidget)
+        self.sw.addItem(self.flactools.formatName, self.flactools.preferencesWidget)
+        self.sw.addItem(self.mp3tools.formatName, self.mp3tools.preferencesWidget)
         self.sw.addStretch()
+        

@@ -7,6 +7,7 @@ from FileListTable import FileListTable, FileListModel
 from BottomFrame import BottomFrame
 from FileMP3 import FileMP3
 from FileAAC import FileAAC
+from FileFLAC import FileFLAC
 import os
 
 class MainWindow(QMainWindow):
@@ -118,6 +119,8 @@ class MainWindow(QMainWindow):
             self.fileList.append(FileMP3(metaInfo))
         elif FileAAC.isFormatSupported(metaInfo):
             self.fileList.append(FileAAC(metaInfo))
+        elif FileFLAC.isFormatSupported(metaInfo):
+            self.fileList.append(FileFLAC(metaInfo))
         else:
             return False
         self.fileListTable.insertRow()
