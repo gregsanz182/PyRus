@@ -1,9 +1,9 @@
 from PySide.QtGui import QFrame, QVBoxLayout, QComboBox, QHBoxLayout, QStackedLayout, QStackedWidget, \
-QSizePolicy, QCheckBox, QFormLayout, QLineEdit, QToolButton, QIcon
+QSizePolicy, QCheckBox, QFormLayout, QLineEdit, QToolButton, QIcon, QLabel
 from PySide.QtCore import Qt, QSize
 from EncoderMP3Tools import EncoderMP3Tools
 from EncoderFLACTools import EncoderFLACTools
-from GuiTools import ComboBox, CheckFormWidget, WidgetList
+from GuiTools import ComboBox, WidgetList, CustomVFormLayout, CheckFormWidget, CustomHFormLayout
 
 class BottomFrame(QFrame):
 
@@ -35,7 +35,11 @@ class BottomFrame(QFrame):
         self.layout.addLayout(self.formatLayout)
 
         self.formatBox = ComboBox()
-        self.formatLayout.addWidget(self.formatBox)
+        self.formatLabel = QLabel("Ouput Format")
+        self.formatLayoutTop = CustomHFormLayout()
+        self.formatLayout.addLayout(self.formatLayoutTop)
+        self.formatLayoutTop.addField(self.formatLabel, self.formatBox)
+        self.formatLayoutTop.addStretch()
 
         self.formatBox.addItem(self.flactools.formatName)
         self.formatLayout.addWidget(self.flactools.preferencesWidget)

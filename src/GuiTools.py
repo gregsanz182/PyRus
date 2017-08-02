@@ -1,5 +1,5 @@
 from PySide.QtGui import QWidget, QHBoxLayout, QStackedLayout, QVBoxLayout, QComboBox, \
-QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame
+QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame, QLabel
 from PySide.QtCore import Qt
 
 class CustomHFormLayout(QHBoxLayout):
@@ -9,12 +9,16 @@ class CustomHFormLayout(QHBoxLayout):
     def __init__(self, parent=None):
         """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
-        self.setSpacing(2)
+        self.setContentsMargins(0, 0, 0, 0)
 
     def addField(self, label=None, widgetField=None):
         """Adds the given label and widget in the layout"""
-        self.addWidget(label)
-        self.addWidget(widgetField)
+        vlayout = QVBoxLayout()
+        vlayout.setSpacing(2)
+        self.addLayout(vlayout)
+        vlayout.addWidget(label)
+        vlayout.addWidget(widgetField)
+        vlayout.addStretch()
         self.addSpacing(5)
 
     def addSeparator(self):
@@ -26,6 +30,9 @@ class CustomHFormLayout(QHBoxLayout):
         self.addWidget(separator)
         self.addSpacing(5)
 
+    def setContentsMargin(self, margin: int):
+        self.setContentsMargins(margin, margin, margin, margin)
+
 class CustomVFormLayout(QVBoxLayout):
     """Custom QVBoxLayout that behaves like a QFormLayout. Arranges every item like a form, but with label above the text field.
     Extends QVBoxLayout"""
@@ -35,7 +42,7 @@ class CustomVFormLayout(QVBoxLayout):
         super().__init__(parent)
         self.setSpacing(2)
 
-    def addField(self, label=None, widgetField=None):
+    def addField(self, label: QLabel=None, widgetField: QWidget=None):
         """Adds the given label and widget in the layout"""
         self.addWidget(label)
         self.addWidget(widgetField)
@@ -49,6 +56,9 @@ class CustomVFormLayout(QVBoxLayout):
         self.addSpacing(5)
         self.addWidget(separator)
         self.addSpacing(5)
+    
+    def setContentsMargin(self, margin: int):
+        self.setContentsMargins(margin, margin, margin, margin)
 
 class HWidget(QWidget):
 
