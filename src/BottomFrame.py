@@ -35,10 +35,9 @@ class BottomFrame(QFrame):
         self.layout.addLayout(self.formatLayout)
 
         self.formatBox = ComboBox()
-        self.formatLabel = QLabel("Ouput Format")
         self.formatLayoutTop = CustomHFormLayout()
         self.formatLayout.addLayout(self.formatLayoutTop)
-        self.formatLayoutTop.addField(self.formatLabel, self.formatBox)
+        self.formatLayoutTop.addField(QLabel("Ouput Format"), self.formatBox)
         self.formatLayoutTop.addStretch()
 
         self.formatBox.addItem(self.flactools.formatName)

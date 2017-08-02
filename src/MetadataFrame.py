@@ -2,7 +2,7 @@ from PySide.QtGui import QLabel, QFrame, QComboBox, QPushButton, QWidget, QGraph
 QHBoxLayout, QVBoxLayout, QColor, QPixmap, QSizePolicy
 from PySide.QtCore import Qt, QSize, Signal
 from os import path
-from GuiTools import ComboBox, CustomVFormLayout
+from GuiTools import ComboBox, CustomVFormLayout, FractionField
 
 class MetadataFrame(QFrame):
     """Metadata Frame of the application. Provides fields that shows details of the files selected,
@@ -25,31 +25,25 @@ class MetadataFrame(QFrame):
         self.metadataLayout.addSpacing(5)
         self.metadataLayout.addSeparator()
 
-        self.titleLabel = QLabel("Title")
         self.titleBox = MetadataTextField("<title>")
-        self.metadataLayout.addField(self.titleLabel, self.titleBox)
+        self.metadataLayout.addField(QLabel("Title"), self.titleBox)
 
-        self.artistLabel = QLabel("Artist")
         self.artistBox = MetadataTextField("<artist>")
-        self.metadataLayout.addField(self.artistLabel, self.artistBox)
+        self.metadataLayout.addField(QLabel("Artist"), self.artistBox)
 
-        self.albumLabel = QLabel("Album")
         self.albumBox = MetadataTextField("<album>")
-        self.metadataLayout.addField(self.albumLabel, self.albumBox)
+        self.metadataLayout.addField(QLabel("Album"), self.albumBox)
 
-        self.albumArtistLabel = QLabel("Album Artist")
         self.albumArtistBox = MetadataTextField("<albumartist>")
-        self.metadataLayout.addField(self.albumArtistLabel, self.albumArtistBox)
+        self.metadataLayout.addField(QLabel("Album Artist"), self.albumArtistBox)
 
-        self.trackLabel = QLabel("Track")
-        self.trackBox = MetadataFractionField("<tracknumber>", "<tracktotal>")
+        self.trackBox = FractionField("<tracknumber>", "<tracktotal>")
         self.trackLayout = CustomVFormLayout()
-        self.trackLayout.addField(self.trackLabel, self.trackBox)
+        self.trackLayout.addField(QLabel("Track"), self.trackBox)
 
-        self.discLabel = QLabel("Disc Number")
-        self.discBox = MetadataFractionField("<discnumber>", "<disctotal>")
+        self.discBox = FractionField("<discnumber>", "<disctotal>")
         self.discLayout = CustomVFormLayout()
-        self.discLayout.addField(self.discLabel, self.discBox)
+        self.discLayout.addField(QLabel("Disc Number"), self.discBox)
 
         self.trackdiscLayout = QHBoxLayout()
         self.trackdiscLayout.addLayout(self.trackLayout)
@@ -57,20 +51,17 @@ class MetadataFrame(QFrame):
         self.trackdiscLayout.setSpacing(20)
         self.metadataLayout.addLayout(self.trackdiscLayout)
 
-        self.commentLabel = QLabel("Comment")
         self.commentBox = MetadataTextField("<comment>")
-        self.metadataLayout.addField(self.commentLabel, self.commentBox)
+        self.metadataLayout.addField(QLabel("Comment"), self.commentBox)
 
-        self.yearLabel = QLabel("Year")
         self.yearBox = MetadataTextField("<year>")
         self.yearBox.setFixedWidth(70)
         self.yearLayout = CustomVFormLayout()
-        self.yearLayout.addField(self.yearLabel, self.yearBox)
+        self.yearLayout.addField(QLabel("Year"), self.yearBox)
 
-        self.genreLabel = QLabel("Genre")
         self.genreBox = MetadataTextField("<genre>")
         self.genreLayout = CustomVFormLayout()
-        self.genreLayout.addField(self.genreLabel, self.genreBox)
+        self.genreLayout.addField(QLabel("Genre"), self.genreBox)
 
         self.yearGenreLayout = QHBoxLayout()
         self.yearGenreLayout.addLayout(self.yearLayout)
@@ -195,38 +186,6 @@ class MetadataCoverWidget(QWidget):
         self.buttonsLayout.addWidget(self.removeButton)
         self.buttonsLayout.addWidget(self.exportButton)
 
-class MetadataFractionField(QWidget):
-    """A Custom field consisting of two QComboBox and a slash between them."""
-
-    def __init__(self, metadataItem1=None, metadataItem2=None, parent=None):
-        """Constructor of the class. Initializes and sets all the components"""
-        super().__init__(parent)
-        self.leftBox = MetadataTextField(metadataItem1)
-        self.rightBox = MetadataTextField(metadataItem2)
-        self.splitLabel = QLabel("/")
-        self.splitLabel.setAlignment(Qt.AlignCenter)
-        self.splitLabel.setFixedWidth(4)
-        self.layout = QHBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.setContentsMargins(0, 0, 2, 0)
-        self.layout.addWidget(self.leftBox)
-        self.layout.addWidget(self.splitLabel)
-        self.layout.addWidget(self.rightBox)
-
-    def setTextToMetadata(self, item):
-        """Sets the current text in the fields to the metadata of the file list"""
-        self.leftBox.setTextToMetadata(item)
-        self.rightBox.setTextToMetadata(item)
-
-    def setFieldText(self, listIndexed):
-        """Sets the metadata values in the fields"""
-        self.leftBox.setFieldText(listIndexed)
-        self.rightBox.setFieldText(listIndexed)
-
-    def clear(self):
-        """Cleans the Combo boxes"""
-        self.leftBox.clear()
-        self.rightBox.clear()
 
 class MetadataTextField(ComboBox):
     """A Custom QComboBox for the display and editing of the values in the metadata of the fileList"""

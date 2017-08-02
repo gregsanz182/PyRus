@@ -11,16 +11,15 @@ class EncoderFLACTools(EncoderTools):
         self.layout = CustomHFormLayout(self.preferencesWidget)
         self.layout.setContentsMargin(0)
 
-        self.containerBox = ComboBox()
-        self.containerBox.addItems(self.containerList)
-        self.containerBox.setCurrentIndex(0)
-        self.layout.addField(QLabel("Container"), self.containerBox)
-
-
         self.compressionLevelBox = ComboBox()
         self.compressionLevelBox.addItems(self.compressionLevels)
         self.compressionLevelBox.setCurrentIndex(3)
         self.layout.addField(QLabel("Compression Level"), self.compressionLevelBox)
+
+        self.containerBox = ComboBox()
+        self.containerBox.addItems(self.containerList)
+        self.containerBox.setCurrentIndex(0)
+        self.layout.addField(QLabel("Container"), self.containerBox)
 
         self.layout.addStretch()
 
