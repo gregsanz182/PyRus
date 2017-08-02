@@ -156,7 +156,7 @@ class ComboBox(QComboBox):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        #self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setItemDelegate(QStyledItemDelegate())
         self.setStyleSheet("QComboBox QAbstractItemView::item { min-height: 15px;}")
         self.setFixedHeight(23)

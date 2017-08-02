@@ -11,7 +11,7 @@ class EncoderMP3Tools(EncoderTools):
         self.defineItems()
 
         self.layout = CustomHFormLayout(self.preferencesWidget)
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargin(0)
 
         self.bitrateModeBox = ComboBox()
         self.bitrateModeBox.addItems(self.listBitrateModes)
