@@ -7,11 +7,9 @@ class EncoderFLACTools(EncoderTools):
 
     def __init__(self):
         super().__init__()
+        self.defineItems()
         self.layout = QHBoxLayout(self.preferencesWidget)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setAlignment(Qt.AlignLeft)
-
-        self.defineItems()
 
         self.containerBox = ComboBox()
         self.containerBox.addItems(self.containerList)
@@ -24,6 +22,8 @@ class EncoderFLACTools(EncoderTools):
 
         self.layout.addWidget(self.containerBox)
         self.layout.addWidget(self.compressionLevelBox)
+
+        self.layout.addStretch()
 
     def defineItems(self):
         self.formatName = "FLAC | Free Lossless Audio Codec"

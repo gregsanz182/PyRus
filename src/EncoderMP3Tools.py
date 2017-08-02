@@ -1,20 +1,21 @@
 from PySide.QtGui import QHBoxLayout, QComboBox, QStackedWidget, QWidget
 from PySide.QtCore import QSize, Qt
 from EncoderTools import EncoderTools
-from GuiTools import SwitchingWidget, HWidget, ComboBox
+from GuiTools import HWidget, ComboBox, WidgetList
 
 class EncoderMP3Tools(EncoderTools):
 
     def __init__(self):
         super().__init__()
-        self.formatNameByExtensions = {}
+        self.bitrateModeWidgets = WidgetList()
+        self.defineItems()
+
         self.layout = QHBoxLayout(self.preferencesWidget)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.defineItems()
-
-        self.sw = SwitchingWidget(Qt.Horizontal)
-        self.layout.addWidget(self.sw)
+        self.bitrateModeBox = ComboBox()
+        self.bitrateModeBox.addItems(self.listBitrateModes)
+        self.layout.addWidget(self.bitrateModeBox)
 
         self.CBRWidget = HWidget()
         self.bitrateCBRMode = ComboBox()
@@ -43,9 +44,18 @@ class EncoderMP3Tools(EncoderTools):
         self.channelABRMode.addItems(self.listChannels)
         self.ABRWidget.addWidget(self.channelABRMode)"""
 
-        self.sw.addItem("CBR (Constant Bitrate)", self.CBRWidget)
-        self.sw.addItem("VBR (Variable Bitrate)", self.VBRWidget)
-        self.sw.addItem("ABR (Average Bitrate)", self.ABRWidget)
+        self.layout.addWidget(self.CBRWidget)
+        self.bitrateModeWidgets.appendWidget(self.CBRWidget)
+        self.layout.addWidget(self.VBRWidget)
+        self.bitrateModeWidgets.appendWidget(self.VBRWidget)
+        self.layout.addWidget(self.ABRWidget)
+        self.bitrateModeWidgets.appendWidget(self.ABRWidget)
+
+        self.layout.addStretch()
+
+        self.bitrateModeWidgets.showOnlyAWidget(self.bitrateModeBox.currentIndex())
+
+        self.makeConnections()
 
     def defineItems(self):
         self.formatName = "MP3 | MPEG Layer-III"
@@ -56,3 +66,5 @@ class EncoderMP3Tools(EncoderTools):
         self.listQualityLevels = ["Q0 Extreme", "Q1", "Q2 Standart", "Q3", "Q4 Medium", "Q5", "Q6", "Q7", "Q8", "Q9"]
         self.listChannels = ["Joint Stereo", "Stereo", "Mono"]
 
+    def makeConnections(self):
+        self.bitrateModeBox.currentIndexChanged.connect(self.bitrateModeWidgets.showOnlyAWidget)
