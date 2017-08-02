@@ -1,7 +1,6 @@
-from PySide.QtGui import QHBoxLayout, QComboBox, QStackedWidget, QWidget, QLabel
-from PySide.QtCore import QSize, Qt
+from PySide.QtGui import QWidget, QLabel
 from EncoderTools import EncoderTools
-from GuiTools import HWidget, ComboBox, WidgetList, CustomHFormLayout
+from GuiTools import CustomComboBox, WidgetList, CustomHFormLayout
 
 class EncoderMP3Tools(EncoderTools):
 
@@ -13,40 +12,40 @@ class EncoderMP3Tools(EncoderTools):
         self.layout = CustomHFormLayout(self.preferencesWidget)
         self.layout.setContentsMargin(0)
 
-        self.bitrateModeBox = ComboBox()
+        self.bitrateModeBox = CustomComboBox()
         self.bitrateModeBox.addItems(self.listBitrateModes)
         self.layout.addField(QLabel("Bitrate mode"), self.bitrateModeBox)
 
         self.CBRWidget = QWidget()
         self.CBRWidget.setLayout(CustomHFormLayout())
         self.CBRWidget.layout().setContentsMargin(0)
-        self.bitrateCBRBox = ComboBox()
+        self.bitrateCBRBox = CustomComboBox()
         self.bitrateCBRBox.addItems(self.listBitrates)
         self.bitrateCBRBox.setCurrentIndex(14)
         self.CBRWidget.layout().addField(QLabel("Bitrate"), self.bitrateCBRBox)
-        """self.channelCBRMode = ComboBox()
+        """self.channelCBRMode = CustomComboBox()
         self.channelCBRMode.addItems(self.listChannels)
         self.CBRWidget.addWidget(self.channelCBRMode)"""
 
         self.VBRWidget = QWidget()
         self.VBRWidget.setLayout(CustomHFormLayout())
         self.VBRWidget.layout().setContentsMargin(0)
-        self.qualityVBRBox = ComboBox()
+        self.qualityVBRBox = CustomComboBox()
         self.qualityVBRBox.addItems(self.listQualityLevels)
         self.qualityVBRBox.setCurrentIndex(2)
         self.VBRWidget.layout().addField(QLabel("Quality Level"), self.qualityVBRBox)
-        """self.channelVBRMode = ComboBox()
+        """self.channelVBRMode = CustomComboBox()
         self.channelVBRMode.addItems(self.listChannels)
         self.VBRWidget.addWidget(self.channelVBRMode)"""
 
         self.ABRWidget = QWidget()
         self.ABRWidget.setLayout(CustomHFormLayout())
         self.ABRWidget.layout().setContentsMargin(0)
-        self.bitrateABRBox = ComboBox()
+        self.bitrateABRBox = CustomComboBox()
         self.bitrateABRBox.addItems(self.listBitrates)
         self.bitrateABRBox.setCurrentIndex(14)
         self.ABRWidget.layout().addField(QLabel("Bitrate"), self.bitrateABRBox)
-        """self.channelABRMode = ComboBox()
+        """self.channelABRMode = CustomComboBox()
         self.channelABRMode.addItems(self.listChannels)
         self.ABRWidget.addWidget(self.channelABRMode)"""
 

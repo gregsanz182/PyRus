@@ -1,7 +1,6 @@
-from PySide.QtGui import QHBoxLayout, QLabel
-from PySide.QtCore import Qt
+from PySide.QtGui import QLabel
 from EncoderTools import EncoderTools
-from GuiTools import ComboBox, CustomHFormLayout
+from GuiTools import CustomComboBox, CustomHFormLayout
 
 class EncoderFLACTools(EncoderTools):
 
@@ -11,12 +10,12 @@ class EncoderFLACTools(EncoderTools):
         self.layout = CustomHFormLayout(self.preferencesWidget)
         self.layout.setContentsMargin(0)
 
-        self.compressionLevelBox = ComboBox()
+        self.compressionLevelBox = CustomComboBox()
         self.compressionLevelBox.addItems(self.compressionLevels)
         self.compressionLevelBox.setCurrentIndex(3)
         self.layout.addField(QLabel("Compression Level"), self.compressionLevelBox)
 
-        self.containerBox = ComboBox()
+        self.containerBox = CustomComboBox()
         self.containerBox.addItems(self.containerList)
         self.containerBox.setCurrentIndex(0)
         self.layout.addField(QLabel("Container"), self.containerBox)

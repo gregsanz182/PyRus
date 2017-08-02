@@ -115,44 +115,7 @@ class WidgetList():
         if index >= 0 and index < len(self.list):
             self.list[index].setVisible(False)
 
-
-class SwitchingWidget(QWidget):
-
-    def __init__(self, orientation=Qt.Horizontal, parent=None):
-        super().__init__(parent)
-        if orientation == Qt.Horizontal:
-            self.layout = QHBoxLayout(self)
-        else:
-            self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.comboBox = ComboBox()
-        self.layout.addWidget(self.comboBox)
-        self.widgetList = []
-        self.makeConnections()
-
-    def addItem(self, text, widget):
-        if len(self.widgetList) == 0:
-            widget.setVisible(True)
-        else:
-            widget.setVisible(False)
-        self.comboBox.addItem(text)
-        self.widgetList.append(widget)
-        self.layout.addWidget(widget)
-    
-    def addStretch(self):
-        self.layout.addStretch()
-
-    def setWidgetVisible(self, index):
-        for i, widget in enumerate(self.widgetList):
-            if i == index:
-                widget.setVisible(True)
-            else:
-                widget.setVisible(False)
-
-    def makeConnections(self):
-        self.comboBox.currentIndexChanged.connect(self.setWidgetVisible)
-
-class ComboBox(QComboBox):
+class CustomComboBox(QComboBox):
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -197,36 +160,3 @@ class CheckFormWidget(QWidget):
         else:
             self.leftWidget.setEnabled(False)
             self.rightWidget.setEnabled(False)
-
-class FractionField(QWidget):
-    """A Custom field consisting of two QComboBox and a slash between them."""
-
-    def __init__(self, metadataItem1=None, metadataItem2=None, parent=None):
-        """Constructor of the class. Initializes and sets all the components"""
-        super().__init__(parent)
-        self.leftBox = MetadataTextField(metadataItem1)
-        self.rightBox = MetadataTextField(metadataItem2)
-        self.splitLabel = QLabel("/")
-        self.splitLabel.setAlignment(Qt.AlignCenter)
-        self.splitLabel.setFixedWidth(4)
-        self.layout = QHBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.setContentsMargins(0, 0, 2, 0)
-        self.layout.addWidget(self.leftBox)
-        self.layout.addWidget(self.splitLabel)
-        self.layout.addWidget(self.rightBox)
-
-    def setTextToMetadata(self, item):
-        """Sets the current text in the fields to the metadata of the file list"""
-        self.leftBox.setTextToMetadata(item)
-        self.rightBox.setTextToMetadata(item)
-
-    def setFieldText(self, listIndexed):
-        """Sets the metadata values in the fields"""
-        self.leftBox.setFieldText(listIndexed)
-        self.rightBox.setFieldText(listIndexed)
-
-    def clear(self):
-        """Cleans the Combo boxes"""
-        self.leftBox.clear()
-        self.rightBox.clear()

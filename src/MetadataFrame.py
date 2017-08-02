@@ -1,8 +1,7 @@
-from PySide.QtGui import QLabel, QFrame, QComboBox, QPushButton, QWidget, QGraphicsDropShadowEffect, \
+from PySide.QtGui import QLabel, QFrame, QPushButton, QWidget, QGraphicsDropShadowEffect, \
 QHBoxLayout, QVBoxLayout, QColor, QPixmap, QSizePolicy
 from PySide.QtCore import Qt, QSize, Signal
-from os import path
-from GuiTools import ComboBox, CustomVFormLayout, FractionField
+from GuiTools import CustomComboBox, CustomVFormLayout
 
 class MetadataFrame(QFrame):
     """Metadata Frame of the application. Provides fields that shows details of the files selected,
@@ -187,7 +186,7 @@ class MetadataCoverWidget(QWidget):
         self.buttonsLayout.addWidget(self.exportButton)
 
 
-class MetadataTextField(ComboBox):
+class MetadataTextField(CustomComboBox):
     """A Custom QComboBox for the display and editing of the values in the metadata of the fileList"""
 
     def __init__(self, metadataItem=None, parent=None):
@@ -234,3 +233,36 @@ class MetadataTextField(ComboBox):
                     item.metadata[self.metadataItem] = None
                 else:
                     item.metadata[self.metadataItem] = self.currentText()
+
+class FractionField(QWidget):
+    """A Custom field consisting of two QComboBox and a slash between them."""
+
+    def __init__(self, metadataItem1=None, metadataItem2=None, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
+        super().__init__(parent)
+        self.leftBox = MetadataTextField(metadataItem1)
+        self.rightBox = MetadataTextField(metadataItem2)
+        self.splitLabel = QLabel("/")
+        self.splitLabel.setAlignment(Qt.AlignCenter)
+        self.splitLabel.setFixedWidth(4)
+        self.layout = QHBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.setContentsMargins(0, 0, 2, 0)
+        self.layout.addWidget(self.leftBox)
+        self.layout.addWidget(self.splitLabel)
+        self.layout.addWidget(self.rightBox)
+
+    def setTextToMetadata(self, item):
+        """Sets the current text in the fields to the metadata of the file list"""
+        self.leftBox.setTextToMetadata(item)
+        self.rightBox.setTextToMetadata(item)
+
+    def setFieldText(self, listIndexed):
+        """Sets the metadata values in the fields"""
+        self.leftBox.setFieldText(listIndexed)
+        self.rightBox.setFieldText(listIndexed)
+
+    def clear(self):
+        """Cleans the Combo boxes"""
+        self.leftBox.clear()
+        self.rightBox.clear()
