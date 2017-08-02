@@ -2,7 +2,7 @@ from PySide.QtGui import QLabel, QFrame, QComboBox, QPushButton, QWidget, QGraph
 QHBoxLayout, QVBoxLayout, QColor, QPixmap, QSizePolicy
 from PySide.QtCore import Qt, QSize, Signal
 from os import path
-from GuiTools import ComboBox
+from GuiTools import ComboBox, CustomVFormLayout
 
 class MetadataFrame(QFrame):
     """Metadata Frame of the application. Provides fields that shows details of the files selected,
@@ -18,7 +18,7 @@ class MetadataFrame(QFrame):
         self.setFixedWidth(320)
         self.listIndexed = []
 
-        self.metadataLayout = MetadataLayout(self)
+        self.metadataLayout = CustomVFormLayout(self)
 
         self.coverWidget = MetadataCoverWidget()
         self.metadataLayout.addWidget(self.coverWidget)
@@ -43,12 +43,12 @@ class MetadataFrame(QFrame):
 
         self.trackLabel = QLabel("Track")
         self.trackBox = MetadataFractionField("<tracknumber>", "<tracktotal>")
-        self.trackLayout = MetadataLayout()
+        self.trackLayout = CustomVFormLayout()
         self.trackLayout.addField(self.trackLabel, self.trackBox)
 
         self.discLabel = QLabel("Disc Number")
         self.discBox = MetadataFractionField("<discnumber>", "<disctotal>")
-        self.discLayout = MetadataLayout()
+        self.discLayout = CustomVFormLayout()
         self.discLayout.addField(self.discLabel, self.discBox)
 
         self.trackdiscLayout = QHBoxLayout()
@@ -64,12 +64,12 @@ class MetadataFrame(QFrame):
         self.yearLabel = QLabel("Year")
         self.yearBox = MetadataTextField("<year>")
         self.yearBox.setFixedWidth(70)
-        self.yearLayout = MetadataLayout()
+        self.yearLayout = CustomVFormLayout()
         self.yearLayout.addField(self.yearLabel, self.yearBox)
 
         self.genreLabel = QLabel("Genre")
         self.genreBox = MetadataTextField("<genre>")
-        self.genreLayout = MetadataLayout()
+        self.genreLayout = CustomVFormLayout()
         self.genreLayout.addField(self.genreLabel, self.genreBox)
 
         self.yearGenreLayout = QHBoxLayout()
@@ -194,30 +194,6 @@ class MetadataCoverWidget(QWidget):
         self.buttonsLayout.addWidget(self.changeButton)
         self.buttonsLayout.addWidget(self.removeButton)
         self.buttonsLayout.addWidget(self.exportButton)
-
-class MetadataLayout(QVBoxLayout):
-    """Custom Layout of the MetadataFrame. Arranges every item like a form, but with label above the text field.
-    Extends QVBoxLayout"""
-
-    def __init__(self, parent=None):
-        """Constructor of the class. Initializes and sets all the components"""
-        super().__init__(parent)
-        self.setSpacing(2)
-
-    def addField(self, label=None, widgetField=None):
-        """Adds the given label and widget in the layout"""
-        self.addWidget(label)
-        self.addWidget(widgetField)
-        self.addSpacing(5)
-
-    def addSeparator(self):
-        """Adds a separator to the layout"""
-        separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)
-        separator.setFrameShadow(QFrame.Sunken)
-        self.addSpacing(5)
-        self.addWidget(separator)
-        self.addSpacing(5)
 
 class MetadataFractionField(QWidget):
     """A Custom field consisting of two QComboBox and a slash between them."""

@@ -3,7 +3,7 @@ QSizePolicy, QCheckBox, QFormLayout, QLineEdit, QToolButton, QIcon
 from PySide.QtCore import Qt, QSize
 from EncoderMP3Tools import EncoderMP3Tools
 from EncoderFLACTools import EncoderFLACTools
-from GuiTools import SwitchingWidget, CheckFormWidget
+from GuiTools import ComboBox, CheckFormWidget, WidgetList
 
 class BottomFrame(QFrame):
 
@@ -17,25 +17,42 @@ class BottomFrame(QFrame):
         self.initComponents()
 
         self.layout = QHBoxLayout(self)
+        self.layout.setSpacing(30)
         self.setOutputPreferencesLayout()
         self.setFormatPreferencesWidget()
         self.layout.addStretch()
+
+        self.makeConnections()
 
     def initComponents(self):
         self.mp3tools = EncoderMP3Tools()
         self.flactools = EncoderFLACTools()
         
     def setFormatPreferencesWidget(self):
-        self.sw = SwitchingWidget(Qt.Vertical)
-        self.layout.addWidget(self.sw)
-        self.sw.setMinimumWidth(350)
-        self.sw.addItem(self.flactools.formatName, self.flactools.preferencesWidget)
-        self.sw.addItem(self.mp3tools.formatName, self.mp3tools.preferencesWidget)
-        self.sw.addStretch()
+        self.formatWidgets = WidgetList()
+        self.formatLayout = QVBoxLayout()
+        self.formatLayout.setSpacing(6)
+        self.layout.addLayout(self.formatLayout)
+
+        self.formatBox = ComboBox()
+        self.formatLayout.addWidget(self.formatBox)
+
+        self.formatBox.addItem(self.flactools.formatName)
+        self.formatLayout.addWidget(self.flactools.preferencesWidget)
+        self.formatWidgets.appendWidget(self.flactools.preferencesWidget)
+
+        self.formatBox.addItem(self.mp3tools.formatName)
+        self.formatLayout.addWidget(self.mp3tools.preferencesWidget)
+        self.formatWidgets.appendWidget(self.mp3tools.preferencesWidget)
+
+        self.formatWidgets.showOnlyAWidget(self.formatBox.currentIndex())
+
+        self.formatLayout.addStretch()
 
     def setOutputPreferencesLayout(self):
-        self.outputLayout = QFormLayout()
+        self.outputLayout = QVBoxLayout()
         self.outputLayout.setContentsMargins(0, 0, 0, 0)
+        self.outputLayout.setSpacing(6)
         self.layout.addLayout(self.outputLayout)
         
         self.outputFolderText = QLineEdit()
@@ -53,3 +70,8 @@ class BottomFrame(QFrame):
         self.fileNameButton.setFixedSize(QSize(25, 25))
         self.fileNameWidget = CheckFormWidget(self.fileNameText, self.fileNameButton, "Set Filename")
         self.outputLayout.addWidget(self.fileNameWidget)
+
+        self.outputLayout.addStretch()
+
+    def makeConnections(self):
+        self.formatBox.currentIndexChanged.connect(self.formatWidgets.showOnlyAWidget)

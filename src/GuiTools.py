@@ -1,6 +1,54 @@
 from PySide.QtGui import QWidget, QHBoxLayout, QStackedLayout, QVBoxLayout, QComboBox, \
-QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton
+QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame
 from PySide.QtCore import Qt
+
+class CustomHFormLayout(QHBoxLayout):
+    """Custom QHBoxLayout that behaves like a QFormLayout. Arranges every item like a form, but with label above the text field.
+    Extends QHBoxLayout"""
+
+    def __init__(self, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
+        super().__init__(parent)
+        self.setSpacing(2)
+
+    def addField(self, label=None, widgetField=None):
+        """Adds the given label and widget in the layout"""
+        self.addWidget(label)
+        self.addWidget(widgetField)
+        self.addSpacing(5)
+
+    def addSeparator(self):
+        """Adds a separator to the layout"""
+        separator = QFrame()
+        separator.setFrameShape(QFrame.VLine)
+        separator.setFrameShadow(QFrame.Sunken)
+        self.addSpacing(5)
+        self.addWidget(separator)
+        self.addSpacing(5)
+
+class CustomVFormLayout(QVBoxLayout):
+    """Custom QVBoxLayout that behaves like a QFormLayout. Arranges every item like a form, but with label above the text field.
+    Extends QVBoxLayout"""
+
+    def __init__(self, parent=None):
+        """Constructor of the class. Initializes and sets all the components"""
+        super().__init__(parent)
+        self.setSpacing(2)
+
+    def addField(self, label=None, widgetField=None):
+        """Adds the given label and widget in the layout"""
+        self.addWidget(label)
+        self.addWidget(widgetField)
+        self.addSpacing(5)
+
+    def addSeparator(self):
+        """Adds a separator to the layout"""
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setFrameShadow(QFrame.Sunken)
+        self.addSpacing(5)
+        self.addWidget(separator)
+        self.addSpacing(5)
 
 class HWidget(QWidget):
 
