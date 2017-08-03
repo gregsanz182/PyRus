@@ -121,7 +121,6 @@ class CustomComboBox(QComboBox):
         super().__init__(parent)
         #self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setItemDelegate(QStyledItemDelegate())
-        self.setStyleSheet("QComboBox QAbstractItemView::item { min-height: 15px;}")
         self.setFixedHeight(23)
 
     def setHorizontalSizePolicy(self, horizontalPolicy):
@@ -132,7 +131,7 @@ class CheckFormWidget(QWidget):
 
     def __init__(self, leftWidget, rightWidget=None, text="", parent=None):
         super().__init__(parent)
-        self.setMaximumWidth(350)
+        self.setMaximumWidth(500)
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(1)

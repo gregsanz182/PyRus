@@ -1,6 +1,6 @@
 from PySide.QtGui import QFrame, QVBoxLayout, QHBoxLayout, \
 QLineEdit, QToolButton, QIcon, QLabel
-from PySide.QtCore import QSize
+from PySide.QtCore import QSize, Qt
 from EncoderMP3Tools import EncoderMP3Tools
 from EncoderFLACTools import EncoderFLACTools
 from GuiTools import CustomComboBox, WidgetList, CheckFormWidget, CustomHFormLayout
@@ -19,7 +19,8 @@ class BottomFrame(QFrame):
         self.layout = QHBoxLayout(self)
         self.layout.setSpacing(30)
         self.setOutputPreferencesLayout()
-        self.setFormatPreferencesWidget()
+        self.setFormatPreferencesLayout()
+        self.setStartButton()
         self.layout.addStretch()
 
         self.makeConnections()
@@ -28,7 +29,7 @@ class BottomFrame(QFrame):
         self.mp3tools = EncoderMP3Tools()
         self.flactools = EncoderFLACTools()
         
-    def setFormatPreferencesWidget(self):
+    def setFormatPreferencesLayout(self):
         self.formatWidgets = WidgetList()
         self.formatLayout = QVBoxLayout()
         self.formatLayout.setSpacing(6)
@@ -37,7 +38,7 @@ class BottomFrame(QFrame):
         self.formatBox = CustomComboBox()
         self.formatLayoutTop = CustomHFormLayout()
         self.formatLayout.addLayout(self.formatLayoutTop)
-        self.formatLayoutTop.addField(QLabel("Ouput Format"), self.formatBox)
+        self.formatLayoutTop.addField(QLabel("Output Format"), self.formatBox)
         self.formatLayoutTop.addStretch()
 
         self.formatBox.addItem(self.flactools.formatName)
@@ -75,6 +76,16 @@ class BottomFrame(QFrame):
         self.outputLayout.addWidget(self.fileNameWidget)
 
         self.outputLayout.addStretch()
+
+    def setStartButton(self):
+        self.startButton = QToolButton()
+        self.startButton.setIcon(QIcon("resources/imgs/startConvert.png"))
+        self.startButton.setIconSize(QSize(59, 29))
+        self.startButton.setText("Start Conversion")
+        self.startButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        self.startButton.setStyleSheet("QToolButton {padding: 0px 16px 7px 16px;}")
+        #self.startButton.setFixedWidth(80)
+        self.layout.addWidget(self.startButton, alignment=Qt.AlignBottom)
 
     def makeConnections(self):
         self.formatBox.currentIndexChanged.connect(self.formatWidgets.showOnlyAWidget)

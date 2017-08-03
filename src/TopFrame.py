@@ -22,7 +22,7 @@ class TopFrame(QFrame):
 
         self.addSeparator()
 
-        self.removeFileButton = ToolButton("Remove", QIcon("resources/imgs/removeFileIcon2.png"))
+        self.removeFileButton = ToolButton("Remove", QIcon("resources/imgs/removeFileIcon.png"))
         self.layout.addWidget(self.removeFileButton, alignment=Qt.AlignVCenter)
 
         self.clearListButton = ToolButton("Clear List", QIcon("resources/imgs/removeAllIcon.png"))
