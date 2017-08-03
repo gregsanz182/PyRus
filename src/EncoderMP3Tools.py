@@ -56,8 +56,6 @@ class EncoderMP3Tools(EncoderTools):
         self.layout.addWidget(self.ABRWidget)
         self.bitrateModeWidgets.appendWidget(self.ABRWidget)
 
-        self.layout.addStretch()
-
         self.bitrateModeWidgets.showOnlyAWidget(self.bitrateModeBox.currentIndex())
 
         self.makeConnections()

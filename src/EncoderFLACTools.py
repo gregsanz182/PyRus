@@ -20,7 +20,6 @@ class EncoderFLACTools(EncoderTools):
         self.containerBox.setCurrentIndex(0)
         self.layout.addField(QLabel("Container"), self.containerBox)
 
-        self.layout.addStretch()
 
     def defineItems(self):
         self.formatName = "FLAC | Free Lossless Audio Codec"

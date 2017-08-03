@@ -10,6 +10,7 @@ class CustomHFormLayout(QHBoxLayout):
         """Constructor of the class. Initializes and sets all the components"""
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
+        self.setAlignment(Qt.AlignLeft)
 
     def addField(self, label=None, widgetField=None):
         """Adds the given label and widget in the layout"""

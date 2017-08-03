@@ -20,8 +20,8 @@ class BottomFrame(QFrame):
         self.layout.setSpacing(30)
         self.setOutputPreferencesLayout()
         self.setFormatPreferencesLayout()
-        self.setStartButton()
         self.layout.addStretch()
+        self.setStartButton()
 
         self.makeConnections()
 
@@ -39,7 +39,6 @@ class BottomFrame(QFrame):
         self.formatLayoutTop = CustomHFormLayout()
         self.formatLayout.addLayout(self.formatLayoutTop)
         self.formatLayoutTop.addField(QLabel("Output Format"), self.formatBox)
-        self.formatLayoutTop.addStretch()
 
         self.formatBox.addItem(self.flactools.formatName)
         self.formatLayout.addWidget(self.flactools.preferencesWidget)
