@@ -4,6 +4,8 @@ import base64
 import sys
 import hashlib
 import subprocess
+import _thread
+import time
 
 class MyModel():
 
@@ -34,6 +36,21 @@ class MyModel():
                 print("Error")
 
 if __name__ == "__main__":
+    def print_time(threadName, delay):
+        count = 0
+        while count < 5:
+            time.sleep(delay)
+            count += 1
+            print("%s: %s" % (threadName, time.ctime(time.time())))
+
+    try:
+        _thread.start_new_thread(print_time, ("Thread-1", 2, ))
+        _thread.start_new_thread(print_time, ("Thread-2", 4, ))
+    except:
+        print("Error: unable to start thread")
+
+    while 1:
+        pass
     """faad = QProcess()
     lame = QProcess()
 
@@ -51,7 +68,7 @@ if __name__ == "__main__":
 
     lame.close()"""
 
-    h = MyModel()
+    #h = MyModel()
 
     """h = subprocess.Popen("mpg123 -v -w holaa.wav hola123.mp3", shell=True)
 

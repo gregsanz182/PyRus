@@ -132,7 +132,7 @@ class CheckFormWidget(QWidget):
 
     def __init__(self, leftWidget, rightWidget=None, text="", parent=None):
         super().__init__(parent)
-        self.setMaximumWidth(500)
+        self.setMaximumWidth(400)
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(1)
