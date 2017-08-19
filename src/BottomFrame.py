@@ -1,14 +1,15 @@
 from PySide.QtGui import QFrame, QVBoxLayout, QHBoxLayout, \
-QLineEdit, QToolButton, QIcon, QLabel
+QLineEdit, QToolButton, QIcon, QLabel, QFileDialog
 from PySide.QtCore import QSize, Qt
 from EncoderMP3Tools import EncoderMP3Tools
 from EncoderFLACTools import EncoderFLACTools
 from GuiTools import CustomComboBox, WidgetList, CheckFormWidget, CustomHFormLayout
+import os
 
 class BottomFrame(QFrame):
 
     def __init__(self, parent=None):
-        """Top Frame of the application. 
+        """Top Frame of the application.
         Provides the set of times that handles the preferences of conversion and output"""
         super().__init__(parent)
         self.setStyleSheet("QFrame#bottomFrame {border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
@@ -88,3 +89,32 @@ class BottomFrame(QFrame):
 
     def makeConnections(self):
         self.formatBox.currentIndexChanged.connect(self.formatWidgets.showOnlyAWidget)
+        self.outputFolderButton.clicked.connect(self.selectOutputFolder)
+
+    def selectOutputFolder(self):
+        path = QFileDialog.getExistingDirectory(self, "Select Folder", os.getcwd())
+        if len(path) > 0:
+            self.outputFolderText.setText(path)
+
+    def startConversion(self, fileList):
+        curIndex = self.formatBox.currentIndex()
+        if curIndex == 0:
+            self.flactools.beginEncoding(fileList)
+
+    def getFilenameTemplate(self):
+        if self.fileNameWidget.getState() is Qt.Checked:
+            return self.fileNameText.text()
+        else:
+            return None
+
+    def getOutputFolder(self):
+        if self.outputFolderWidget.getState() is Qt.Checked:
+            return self.outputFolderText.text()
+        else:
+            return None
+
+    def getTool(self):
+        if self.formatBox.currentIndex() == 0:
+            return self.flactools
+        elif self.formatBox.currentIndex() == 1:
+            return self.mp3tools

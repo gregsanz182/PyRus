@@ -1,6 +1,7 @@
 from PySide.QtGui import QWidget, QHBoxLayout, QStackedLayout, QVBoxLayout, QComboBox, \
-QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame, QLabel
-from PySide.QtCore import Qt
+QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame, QLabel, \
+QToolButton
+from PySide.QtCore import Qt, Signal
 
 class CustomHFormLayout(QHBoxLayout):
     """Custom QHBoxLayout that behaves like a QFormLayout. Arranges every item like a form, but with label above the text field.
@@ -147,10 +148,10 @@ class CheckFormWidget(QWidget):
             self.rightWidget = rightWidget
             self.bottomLayout.addWidget(self.rightWidget)
 
-        self.makeConections()
+        self.makeConnections()
         self.changeState(Qt.Unchecked)
 
-    def makeConections(self):
+    def makeConnections(self):
         self.checkBox.stateChanged.connect(self.changeState)
 
     def changeState(self, state):
@@ -160,3 +161,52 @@ class CheckFormWidget(QWidget):
         else:
             self.leftWidget.setEnabled(False)
             self.rightWidget.setEnabled(False)
+
+    def getState(self):
+        return self.checkBox.checkState()
+
+class CustomCounterWidget(QWidget):
+
+    moreButtonClicked = Signal()
+    lessButtonClicked = Signal()
+
+    def __init__(self, initValue=1, minimum=None, maximum=None, parent=None):
+        super().__init__(parent)
+        self.actualValue = initValue
+        self.minimum = minimum
+        self.maximum = maximum
+        self.initComponents()
+        self.makeConnections()
+
+    def initComponents(self):
+        self.layout = QHBoxLayout(self)
+        self.layout.setAlignment(Qt.AlignLeft)
+
+        self.lessButton = QToolButton()
+        self.lessButton.setFixedWidth(20)
+        self.lessButton.setText("-")
+        self.layout.addWidget(self.lessButton)
+
+        self.numLineEdit = QLineEdit(str(self.actualValue))
+        self.numLineEdit.setFixedWidth(30)
+        self.numLineEdit.setReadOnly(True)
+        self.layout.addWidget(self.numLineEdit)
+
+        self.moreButton = QToolButton()
+        self.moreButton.setFixedWidth(20)
+        self.moreButton.setText("+")
+        self.layout.addWidget(self.moreButton)
+
+    def makeConnections(self):
+        self.lessButton.clicked.connect(self.decreaseValue)
+        self.moreButton.clicked.connect(self.increaseValue)
+
+    def increaseValue(self):
+        if self.maximum is None or (self.actualValue + 1) <= self.maximum:
+            self.actualValue += 1
+            self.numLineEdit.setText(str(self.actualValue))
+
+    def decreaseValue(self):
+        if self.minimum is None or (self.actualValue - 1) >= self.minimum:
+            self.actualValue -= 1
+            self.numLineEdit.setText(str(self.actualValue))

@@ -7,7 +7,6 @@ class EncoderMP3Tools(EncoderTools):
     def __init__(self):
         super().__init__()
         self.bitrateModeWidgets = WidgetList()
-        self.defineItems()
 
         self.layout = CustomHFormLayout(self.preferencesWidget)
         self.layout.setContentsMargin(0)
@@ -20,7 +19,7 @@ class EncoderMP3Tools(EncoderTools):
         self.CBRWidget.setLayout(CustomHFormLayout())
         self.CBRWidget.layout().setContentsMargin(0)
         self.bitrateCBRBox = CustomComboBox()
-        self.bitrateCBRBox.addItems(self.listBitrates)
+        self.bitrateCBRBox.addItems(self.listBitratesText)
         self.bitrateCBRBox.setCurrentIndex(14)
         self.CBRWidget.layout().addField(QLabel("Bitrate"), self.bitrateCBRBox)
         """self.channelCBRMode = CustomComboBox()
@@ -64,10 +63,14 @@ class EncoderMP3Tools(EncoderTools):
         self.formatName = "MP3 | MPEG Layer-III"
         self.listBitrateModes = ["CBR (Constant Bitrate)", "VBR (Variable Bitrate)", "ABR (Average Bitrate)"]
         self.listBitrates = "8 16 24 32 40 48 56 64 80 96 112 128 144 160 192 224 256 320".split(" ")
-        for i, bitrate in enumerate(self.listBitrates):
-            self.listBitrates[i] = bitrate + " kbps"
+        self.listBitratesText = []
+        for bitrate in self.listBitrates:
+            self.listBitratesText.append(bitrate + " kbps")
         self.listQualityLevels = ["Q0 Extreme", "Q1", "Q2 Standart", "Q3", "Q4 Medium", "Q5", "Q6", "Q7", "Q8", "Q9"]
         self.listChannels = ["Joint Stereo", "Stereo", "Mono"]
 
     def makeConnections(self):
         self.bitrateModeBox.currentIndexChanged.connect(self.bitrateModeWidgets.showOnlyAWidget)
+
+    def beginEncoding(self, fileList: list):
+        pass

@@ -8,6 +8,7 @@ from BottomFrame import BottomFrame
 from FileMP3 import FileMP3
 from FileAAC import FileAAC
 from FileFLAC import FileFLAC
+from ConversionThread import ConversionThread
 import os
 
 class MainWindow(QMainWindow):
@@ -74,6 +75,11 @@ class MainWindow(QMainWindow):
         """Makes the connections between the signals and slots of the application components."""
         self.topFrame.addFileButton.clicked.connect(self.addFiles)
         self.fileListTable.selectionHasChanged.connect(self.metadataFrame.setFieldValues)
+        self.bottomFrame.startButton.clicked.connect(self.startConversion)
+
+    def startConversion(self):
+        win = ConversionThread(self.fileList, self.bottomFrame.getTool(), self.bottomFrame.getOutputFolder(), self.bottomFrame.getFilenameTemplate())
+        win.beginThread()
 
     def updateModel(self):
         indexes = self.fileListSelectionModel.selectedIndexes()

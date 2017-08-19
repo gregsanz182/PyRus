@@ -31,7 +31,10 @@ class FileAudio():
     def printTags(self):
         """Prints of all the available tags"""
         for key, value in self.metadata.items():
-            print("{0}: {1}".format(key, value))
+            try:
+                print("{0}: {1}".format(key, value))
+            except UnicodeEncodeError:
+                print("Character error in tag {0}".format(key))
 
     def getAlbumCover(self, metaInfo):
         """If the file contains a cover, this method extract it and save it to a temporarily 
