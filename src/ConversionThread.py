@@ -16,21 +16,31 @@ class ConversionThread(threading.Thread):
         self.threadsNum = 1
         self.state = 0
         self.currentThreadNum = 0
+        self.w = ConversionDialog()
+        self.makeConnections()
 
     def run(self):
+        flag = True
         while self.state == 1:
             if len(self.threadsList) < self.threadsNum:
                 self.addThread()
+
+            for thr in self.threadsList:
+                if thr.isAlive() is False:
+                    self.state = 2
+            time.sleep(0.1)
         
 
     def beginThread(self):
-        self.w = ConversionDialog()
         self.state = 1
-        #self.start()
+        self.start()
         self.w.exec_()
 
-    def numberThreadsChanged(self, num):
-        self.threadsNum = int(num)
+    def makeConnections(self):
+        self.w.numThreadsWidget.counterChanged.connect(self.changeNumberThreads)
+
+    def changeNumberThreads(self, num: int):
+        self.threadsNum = num
 
     def addThread(self):
         threadAux = TaskThread(self.currentThreadNum)

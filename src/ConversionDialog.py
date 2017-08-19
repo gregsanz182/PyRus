@@ -1,5 +1,6 @@
 import threading
-from PySide.QtGui import QDialog, QDesktopWidget, QProgressBar, QVBoxLayout, QTableWidget
+from PySide.QtGui import QDialog, QDesktopWidget, QProgressBar, QVBoxLayout, QTableWidget, QFormLayout, QLabel
+from PySide.QtCore import Qt
 from GuiTools import CustomCounterWidget
 
 class ConversionDialog(QDialog):
@@ -18,7 +19,7 @@ class ConversionDialog(QDialog):
         self.tableList = QTableWidget()
         self.layout.addWidget(self.tableList)
 
-        self.numThreadsWidget = CustomCounterWidget(1, 1, 8)
+        self.numThreadsWidget = CustomCounterWidget("Number of Converters:", 1, 1, 8)
         self.layout.addWidget(self.numThreadsWidget)
 
         self.totalProgressBar = QProgressBar()

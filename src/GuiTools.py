@@ -1,7 +1,7 @@
 from PySide.QtGui import QWidget, QHBoxLayout, QStackedLayout, QVBoxLayout, QComboBox, \
 QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame, QLabel, \
 QToolButton
-from PySide.QtCore import Qt, Signal
+from PySide.QtCore import Qt, Signal, QSize
 
 class CustomHFormLayout(QHBoxLayout):
     """Custom QHBoxLayout that behaves like a QFormLayout. Arranges every item like a form, but with label above the text field.
@@ -167,23 +167,26 @@ class CheckFormWidget(QWidget):
 
 class CustomCounterWidget(QWidget):
 
-    moreButtonClicked = Signal()
-    lessButtonClicked = Signal()
+    counterChanged = Signal(int)
 
-    def __init__(self, initValue=1, minimum=None, maximum=None, parent=None):
+    def __init__(self, text="", initValue=1, minimum=None, maximum=None, parent=None):
         super().__init__(parent)
         self.actualValue = initValue
         self.minimum = minimum
         self.maximum = maximum
+        self.labelText = QLabel(text)
         self.initComponents()
         self.makeConnections()
 
     def initComponents(self):
         self.layout = QHBoxLayout(self)
         self.layout.setAlignment(Qt.AlignLeft)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+
+        self.layout.addWidget(self.labelText)
 
         self.lessButton = QToolButton()
-        self.lessButton.setFixedWidth(20)
+        self.lessButton.setFixedSize(QSize(22, 22))
         self.lessButton.setText("-")
         self.layout.addWidget(self.lessButton)
 
@@ -193,9 +196,11 @@ class CustomCounterWidget(QWidget):
         self.layout.addWidget(self.numLineEdit)
 
         self.moreButton = QToolButton()
-        self.moreButton.setFixedWidth(20)
+        self.moreButton.setFixedSize(QSize(22, 22))
         self.moreButton.setText("+")
         self.layout.addWidget(self.moreButton)
+
+        self.layout.addStretch()
 
     def makeConnections(self):
         self.lessButton.clicked.connect(self.decreaseValue)
@@ -205,8 +210,10 @@ class CustomCounterWidget(QWidget):
         if self.maximum is None or (self.actualValue + 1) <= self.maximum:
             self.actualValue += 1
             self.numLineEdit.setText(str(self.actualValue))
+            self.counterChanged.emit(self.actualValue)
 
     def decreaseValue(self):
         if self.minimum is None or (self.actualValue - 1) >= self.minimum:
             self.actualValue -= 1
             self.numLineEdit.setText(str(self.actualValue))
+            self.counterChanged.emit(self.actualValue)
