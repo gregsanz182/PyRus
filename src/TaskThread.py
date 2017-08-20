@@ -13,4 +13,4 @@ class TaskThread(threading.Thread):
     def run(self):
         begin_time = time.time()
         current_time=0
-        self.tool.prepareCMDLine(self.audioFile)
+        print(self.tool.prepareCMDLine(self.audioFile))

@@ -8,7 +8,7 @@ class ConversionThread(threading.Thread):
     def __init__(self, listFiles, tool, output=None, outputTemplate=None):
         super().__init__()
         self.listFiles = listFiles
-        self.returnList = listFiles[:]
+        self.backupList = listFiles[:]
         self.tool = tool
         self.output = output
         self.outputTemplate = outputTemplate
@@ -20,14 +20,16 @@ class ConversionThread(threading.Thread):
         self.makeConnections()
 
     def run(self):
-        flag = True
         while self.state == 1:
-            if len(self.threadsList) < self.threadsNum:
-                self.addThread()
+            if len(self.threadsList) < self.threadsNum and len(self.listFiles) > 0:
+                self.addAndStartTask()
 
-            for thr in self.threadsList:
+            for thr in self.threadsList[:]:
                 if thr.isAlive() is False:
-                    self.state = 2
+                    self.threadsList.remove(thr)
+
+            if len(self.threadsList) <= 0 and len(self.listFiles) <= 0:
+                self.state = 2
             time.sleep(0.1)
         
 
@@ -42,8 +44,8 @@ class ConversionThread(threading.Thread):
     def changeNumberThreads(self, num: int):
         self.threadsNum = num
 
-    def addThread(self):
-        threadAux = TaskThread(self.currentThreadNum, self.listFiles[0], self.tool)
+    def addAndStartTask(self):
+        threadAux = TaskThread(self.currentThreadNum, self.listFiles.pop(), self.tool)
         self.currentThreadNum += 1
         self.threadsList.append(threadAux)
         threadAux.start()
