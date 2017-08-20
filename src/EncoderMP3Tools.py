@@ -1,6 +1,7 @@
 from PySide.QtGui import QWidget, QLabel
 from EncoderTools import EncoderTools
 from GuiTools import CustomComboBox, WidgetList, CustomHFormLayout
+from FileAudio import FileAudio
 
 class EncoderMP3Tools(EncoderTools):
 
@@ -69,8 +70,11 @@ class EncoderMP3Tools(EncoderTools):
         self.listQualityLevels = ["Q0 Extreme", "Q1", "Q2 Standart", "Q3", "Q4 Medium", "Q5", "Q6", "Q7", "Q8", "Q9"]
         self.listChannels = ["Joint Stereo", "Stereo", "Mono"]
 
+    def defineTagsMapping(self):
+        pass
+
     def makeConnections(self):
         self.bitrateModeBox.currentIndexChanged.connect(self.bitrateModeWidgets.showOnlyAWidget)
 
-    def beginEncoding(self, fileList: list):
+    def prepareCMDLine(self, audioFile: FileAudio):
         pass

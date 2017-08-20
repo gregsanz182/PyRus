@@ -43,7 +43,7 @@ class ConversionThread(threading.Thread):
         self.threadsNum = num
 
     def addThread(self):
-        threadAux = TaskThread(self.currentThreadNum)
+        threadAux = TaskThread(self.currentThreadNum, self.listFiles[0], self.tool)
         self.currentThreadNum += 1
         self.threadsList.append(threadAux)
         threadAux.start()
