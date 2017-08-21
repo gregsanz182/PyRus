@@ -18,3 +18,6 @@ class FileMP3 (FileAudio):
                 return True
 
         return False
+    
+    def prepareCMDLine(self):
+        return 'lame --decode "{0}" -'.format(self.metadata["<path>"])

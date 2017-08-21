@@ -1,4 +1,4 @@
-from PySide.QtCore import *
+from PySide.QtCore import QProcess
 from PySide.QtGui import *
 import base64
 import sys
@@ -14,15 +14,14 @@ class MyModel():
         self.faad = QProcess()
         self.lame = QProcess()
         self.faad.setStandardOutputProcess(self.lame)
-        self.faad.setProcessChannelMode(QProcess.MergedChannels)
-        self.faad.setReadChannel(QProcess.StandardOutput)
-        self.faad.start("lame", ["--decode", "sss.mp3", "hola.wav"])
-        self.lame.start("lame", ["-b 128", "-", "haha.mp3"])
+        self.faad.setReadChannel(QProcess.StandardError)
+        self.faad.start("flac", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassandra Gemini.flac"])
+        self.lame.start("lame", ["-b 128", "--quiet", "-", "haha.mp3"])
 
         while True:
             self.faad.waitForReadyRead()
-            if self.faad.bytesAvailable() > 0:
-                print(self.faad.readLine())
+            while self.faad.bytesAvailable() > 0:
+                print(str(self.faad.readLine()).replace("\b", ""))
 
         self.faad.waitForFinished(-1)
         self.lame.waitForFinished(-1)
@@ -35,8 +34,14 @@ class MyModel():
             except Exception:
                 print("Error")
 
+class CustomBufferStream():
+
+    def __init__(self, stdout):
+        pass
+
+
 if __name__ == "__main__":
-    def print_time(threadName, delay):
+    """def print_time(threadName, delay):
         count = 0
         while count < 5:
             time.sleep(delay)
@@ -50,7 +55,7 @@ if __name__ == "__main__":
         print("Error: unable to start thread")
 
     while 1:
-        pass
+        pass"""
     """faad = QProcess()
     lame = QProcess()
 
@@ -68,15 +73,30 @@ if __name__ == "__main__":
 
     lame.close()"""
 
-    #h = MyModel()
+    h = MyModel()
 
-    """h = subprocess.Popen("mpg123 -v -w holaa.wav hola123.mp3", shell=True)
+    """h = subprocess.Popen('flac --decode -c "E:\\Descargas\\Steven Wilson - Hand. Cannot. Erase. (2015) [FLAC]\\Disc 1of2\\01 - First Regret.flac" | lame --quiet - test2.mp3', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
-    h.wait()
+    while True:
+        output = h.stdout.read(50)
+        if len(output) <= 0 and h.poll() is not None:
+            break
+        print(output)"""
 
-    print(h.returncode)"""
+    """h = subprocess.Popen(['flac', '--decode', '-c', 'C:\\Users\\fmlia\\Desktop\\06- Cassandra Gemini.flac'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    h2 = subprocess.Popen(['lame', '--quiet', '-', 'test2.mp3'], stdin=h.stdout)
+    h.stdout.close()
+    for i in range(6):
+        output = h.stderr.readline()
+    output = h.stderr.read(27)
+    print(output)
+    while True:
+        output = h.stderr.read1(-1)
+        if len(output) <= 0 and h.poll() is not None:
+            break
+        print(output)"""
 
-    
+
     """try:
         mainApp = QApplication(sys.argv)
 

@@ -55,14 +55,15 @@ class EncoderFLACTools(EncoderTools):
         if self.containerBox.currentIndex() == 1:
             cmdline += " --ogg"
         cmdline += " -"+self.compressionLevels[self.compressionLevelBox.currentIndex()]
-        if audioFile.metadata["<coverfile>"] is not None:
+        """if audioFile.metadata["<coverfile>"] is not None:
             cmdline += " --picture=3|"
             if audioFile.metadata["<covermime>"] is not None:
                 cmdline += audioFile.metadata["<covermime>"]
             cmdline += "|||"
-            cmdline += audioFile.metadata["<coverfile>"]
+            cmdline += audioFile.metadata["<coverfile>"]"""
         
         cmdline += self.tagsCMDLine(audioFile)
+        cmdline += ' --output-name="test.flac"'
 
         cmdline += " -"
 

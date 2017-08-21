@@ -17,3 +17,6 @@ class FileFLAC (FileAudio):
                     return True
 
         return False
+
+    def prepareCMDLine(self):
+        return 'flac --decode -c "{0}"'.format(self.metadata["<path>"])
