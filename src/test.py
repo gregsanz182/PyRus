@@ -15,10 +15,10 @@ class MyModel():
         self.lame = QProcess()
         self.faad.setStandardOutputProcess(self.lame)
         self.faad.setReadChannel(QProcess.StandardError)
-        self.faad.start("flac", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassandra Gemini.flac"])
-        self.lame.start("lame", ["-b 128", "--quiet", "-", "haha.mp3"])
+        self.faad.start("resources\\tools\\flac", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassassndra Gemini.flac"])
+        self.lame.start("resources\\tools\\flac", ["-5", "--totally-silent", '--output-name=hah 2a.flac', "-"])
 
-        while True:
+        while self.faad.state() != QProcess.NotRunning:
             self.faad.waitForReadyRead()
             while self.faad.bytesAvailable() > 0:
                 print(str(self.faad.readLine()).replace("\b", ""))

@@ -1,4 +1,5 @@
 from FileAudio import FileAudio
+from CustomProcess import CustomProcess
 
 class FileMP3 (FileAudio):
     """Represents MP3 Audio Files. Contains methods that handles this format.
@@ -19,5 +20,8 @@ class FileMP3 (FileAudio):
 
         return False
     
-    def prepareCMDLine(self):
-        return 'lame --decode "{0}" -'.format(self.metadata["<path>"])
+    def prepareProcess(self) -> CustomProcess:
+        process = CustomProcess()
+        process.setProgram("resources\\tools\\lame")
+        process.extendArg(["--decode", self.metadata["<path>"], "-"])
+        return process

@@ -96,22 +96,16 @@ class BottomFrame(QFrame):
         if len(path) > 0:
             self.outputFolderText.setText(path)
 
-    def startConversion(self, fileList):
-        curIndex = self.formatBox.currentIndex()
-        if curIndex == 0:
-            self.flactools.beginEncoding(fileList)
-
-    def getFilenameTemplate(self):
+    def getOutputPreferences(self) -> tuple:
         if self.fileNameWidget.getState() is Qt.Checked:
-            return self.fileNameText.text()
+            template = self.fileNameText.text()
         else:
-            return None
-
-    def getOutputFolder(self):
+            template = None
         if self.outputFolderWidget.getState() is Qt.Checked:
-            return self.outputFolderText.text()
+            folder = self.outputFolderText.text()
         else:
-            return None
+            folder = None
+        return tuple(folder, template)
 
     def getTool(self):
         if self.formatBox.currentIndex() == 0:

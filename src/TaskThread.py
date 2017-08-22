@@ -1,16 +1,33 @@
 import threading
-import time
+from PySide.QtCore import QProcess
 from EncoderTools import EncoderTools
+from CustomProcess import CustomProcess
 
 class TaskThread(threading.Thread):
 
-    def __init__(self, threadNumber, audioFile, tool):
+    dirLock = threading.Lock()
+
+    def __init__(self, threadNumber, audioFile, tool, output):
         super().__init__()
         self.threadNumber = threadNumber
         self.audioFile = audioFile
         self.tool = tool
+        self.output = output
 
     def run(self):
-        begin_time = time.time()
-        current_time=0
-        print(self.audioFile.prepareCMDLine()+" | "+self.tool.prepareCMDLine(self.audioFile))
+        decProcess = self.audioFile.prepareProcess()
+        encProcess = self.tool.prepareProcess(self.audioFile)
+
+        decProcess.setStandardOutputProcess(encProcess)
+        decProcess.setReadChannel(QProcess.StandardError)
+
+        decProcess.startProcess()
+        encProcess.startProcess()
+
+        while decProcess.state() != QProcess.NotRunning:
+            decProcess.waitForReadyRead()
+            while decProcess.bytesAvailable() > 0:
+                print(str(decProcess.readLine()).replace("\b", ""))
+
+        decProcess.waitForFinished(-1)
+        encProcess.waitForFinished(-1)

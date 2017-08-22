@@ -2,6 +2,7 @@ from PySide.QtGui import QLabel
 from EncoderTools import EncoderTools
 from GuiTools import CustomComboBox, CustomHFormLayout
 from FileAudio import FileAudio
+from CustomProcess import CustomProcess
 
 class EncoderFLACTools(EncoderTools):
 
@@ -50,11 +51,13 @@ class EncoderFLACTools(EncoderTools):
         self.tagsMapping["<comment>"] = "COMMENT"
         self.tagsMapping["<lyrics>"] = "LYRICS"
 
-    def prepareCMDLine(self, audioFile: FileAudio):
-        cmdline = "flac"
+    def prepareProcess(self, audioFile: FileAudio) -> CustomProcess:
+        process = CustomProcess()
+        process.setProgram("resources\\tools\\flac")
+        process.appendArg("--totally-silent")
         if self.containerBox.currentIndex() == 1:
-            cmdline += " --ogg"
-        cmdline += " -"+self.compressionLevels[self.compressionLevelBox.currentIndex()]
+            process.appendArg("--ogg")
+        process.appendArg("-"+self.compressionLevels[self.compressionLevelBox.currentIndex()])
         """if audioFile.metadata["<coverfile>"] is not None:
             cmdline += " --picture=3|"
             if audioFile.metadata["<covermime>"] is not None:
@@ -62,16 +65,17 @@ class EncoderFLACTools(EncoderTools):
             cmdline += "|||"
             cmdline += audioFile.metadata["<coverfile>"]"""
         
-        cmdline += self.tagsCMDLine(audioFile)
-        cmdline += ' --output-name="test.flac"'
+        process.extendArg(self.getTagArgs(audioFile))
+        process.appendArg('--output-name=test.flac')
+        process.appendArg("-")
 
-        cmdline += " -"
+        for arg in process.args:
+            print(arg)
+        return process
 
-        return cmdline
-
-    def tagsCMDLine(self, audioFile):
-        cmdline = ""
+    def getTagArgs(self, audioFile) -> list:
+        args = []
         for field, value in audioFile.metadata.items():
             if field in self.tagsMapping and value is not None:
-                cmdline += ' --tag={0}="{1}"'.format(self.tagsMapping[field], value)
-        return cmdline    
+                args.append('--tag={0}={1}'.format(self.tagsMapping[field], value))
+        return args    

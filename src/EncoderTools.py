@@ -19,5 +19,5 @@ class EncoderTools(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def prepareCMDLine(self, audioFile: FileAudio):
+    def prepareProcess(self, audioFile: FileAudio):
         pass

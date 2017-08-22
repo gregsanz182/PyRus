@@ -1,17 +1,17 @@
 import threading
 import time
+import os
 from ConversionDialog import ConversionDialog
 from TaskThread import TaskThread
 
 class ConversionThread(threading.Thread):
 
-    def __init__(self, listFiles, tool, output=None, outputTemplate=None):
+    def __init__(self, listFiles, tool, output=tuple(None, None)):
         super().__init__()
         self.listFiles = listFiles
         self.backupList = listFiles[:]
         self.tool = tool
         self.output = output
-        self.outputTemplate = outputTemplate
         self.threadsList = []
         self.threadsNum = 1
         self.state = 0
@@ -45,7 +45,7 @@ class ConversionThread(threading.Thread):
         self.threadsNum = num
 
     def addAndStartTask(self):
-        threadAux = TaskThread(self.currentThreadNum, self.listFiles.pop(), self.tool)
+        threadAux = TaskThread(self.currentThreadNum, self.listFiles.pop(), self.tool, self.output)
         self.currentThreadNum += 1
         self.threadsList.append(threadAux)
         threadAux.start()

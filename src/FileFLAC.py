@@ -1,4 +1,5 @@
 from FileAudio import FileAudio
+from CustomProcess import CustomProcess
 
 class FileFLAC (FileAudio):
     """Represents FLAC Audio Files. Contains methods that handles this format.
@@ -18,5 +19,8 @@ class FileFLAC (FileAudio):
 
         return False
 
-    def prepareCMDLine(self):
-        return 'flac --decode -c "{0}"'.format(self.metadata["<path>"])
+    def prepareProcess(self) -> CustomProcess:
+        process = CustomProcess()
+        process.setProgram("resources\\tools\\flac")
+        process.extendArg(["--decode", "-c", self.metadata["<path>"]])
+        return process

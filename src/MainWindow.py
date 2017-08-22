@@ -78,7 +78,7 @@ class MainWindow(QMainWindow):
         self.bottomFrame.startButton.clicked.connect(self.startConversion)
 
     def startConversion(self):
-        win = ConversionThread(self.fileList, self.bottomFrame.getTool(), self.bottomFrame.getOutputFolder(), self.bottomFrame.getFilenameTemplate())
+        win = ConversionThread(self.fileList, self.bottomFrame.getTool(), self.bottomFrame.getOutputPreferences())
         win.beginThread()
 
     def updateModel(self):
