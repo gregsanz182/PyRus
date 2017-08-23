@@ -63,7 +63,7 @@ class FileAudio():
         return None, None
 
     def getTagsValue(self, stringText):
-        """Given the string 'stringText', returns the values of the tags presented in the string"""
+        """Given the string 'stringText' returns the values of the tags presented in the string"""
         st = stringText[:]
         for tag, value in self.metadata.items():
             if value is None:

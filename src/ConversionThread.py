@@ -6,7 +6,7 @@ from TaskThread import TaskThread
 
 class ConversionThread(threading.Thread):
 
-    def __init__(self, listFiles, tool, output=tuple(None, None)):
+    def __init__(self, listFiles, tool, output=tuple(["", ""])):
         super().__init__()
         self.listFiles = listFiles
         self.backupList = listFiles[:]

@@ -19,5 +19,9 @@ class EncoderTools(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def prepareProcess(self, audioFile: FileAudio):
+    def prepareProcess(self, audioFile: FileAudio, outputPath: str):
+        pass
+
+    @abc.abstractmethod
+    def getExtension(self) -> str:
         pass

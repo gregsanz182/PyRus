@@ -51,7 +51,7 @@ class EncoderFLACTools(EncoderTools):
         self.tagsMapping["<comment>"] = "COMMENT"
         self.tagsMapping["<lyrics>"] = "LYRICS"
 
-    def prepareProcess(self, audioFile: FileAudio) -> CustomProcess:
+    def prepareProcess(self, audioFile: FileAudio, outputPath: str) -> CustomProcess:
         process = CustomProcess()
         process.setProgram("resources\\tools\\flac")
         process.appendArg("--totally-silent")
@@ -66,7 +66,7 @@ class EncoderFLACTools(EncoderTools):
             cmdline += audioFile.metadata["<coverfile>"]"""
         
         process.extendArg(self.getTagArgs(audioFile))
-        process.appendArg('--output-name=test.flac')
+        process.appendArg('--output-name={0}'.format(outputPath))
         process.appendArg("-")
 
         for arg in process.args:
@@ -78,4 +78,9 @@ class EncoderFLACTools(EncoderTools):
         for field, value in audioFile.metadata.items():
             if field in self.tagsMapping and value is not None:
                 args.append('--tag={0}={1}'.format(self.tagsMapping[field], value))
-        return args    
+        return args
+
+    def getExtension(self) -> str:
+        if self.containerBox.currentIndex() == 1:
+            return ".ogg"
+        return ".flac"

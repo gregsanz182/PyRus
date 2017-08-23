@@ -100,12 +100,12 @@ class BottomFrame(QFrame):
         if self.fileNameWidget.getState() is Qt.Checked:
             template = self.fileNameText.text()
         else:
-            template = None
+            template = ""
         if self.outputFolderWidget.getState() is Qt.Checked:
             folder = self.outputFolderText.text()
         else:
-            folder = None
-        return tuple(folder, template)
+            folder = ""
+        return tuple([folder, template])
 
     def getTool(self):
         if self.formatBox.currentIndex() == 0:

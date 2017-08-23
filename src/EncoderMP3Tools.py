@@ -76,5 +76,8 @@ class EncoderMP3Tools(EncoderTools):
     def makeConnections(self):
         self.bitrateModeBox.currentIndexChanged.connect(self.bitrateModeWidgets.showOnlyAWidget)
 
-    def prepareProcess(self, audioFile: FileAudio):
+    def prepareProcess(self, audioFile: FileAudio, outputPath: str):
+        pass
+
+    def getExtension(self) -> str:
         pass
