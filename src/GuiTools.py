@@ -218,7 +218,7 @@ class CustomCounterWidget(QWidget):
             self.numLineEdit.setText(str(self.actualValue))
             self.counterChanged.emit(self.actualValue)
 
-class ConversionTaskProgressBar(QWidget):
+class ConversionTaskWidget(QWidget):
 
     def __init__(self):
         super().__init__()
