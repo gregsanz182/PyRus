@@ -3,6 +3,7 @@ import time
 import os
 from ConversionDialog import ConversionDialog
 from TaskThread import TaskThread
+from Tools import Tools
 
 class ConversionThread(threading.Thread):
 
@@ -45,7 +46,24 @@ class ConversionThread(threading.Thread):
         self.threadsNum = num
 
     def addAndStartTask(self):
-        threadAux = TaskThread(self.currentThreadNum, self.listFiles.pop(), self.tool, self.output)
+        audioFile = self.listFiles.pop()
+        threadAux = TaskThread(self.currentThreadNum, audioFile, self.tool, self.prepareFilePath(audioFile))
         self.currentThreadNum += 1
         self.threadsList.append(threadAux)
         threadAux.start()
+
+    def prepareFilePath(self, audioFile) -> str:
+        filePath = self.output[0]
+        if Tools.isAbsolute(os.path.normpath(filePath)) is False:
+            filePath = os.path.dirname(audioFile.metadata["<path>"]) + os.sep + filePath
+
+        if self.output[1] == "":
+            filePath += os.sep + Tools.getFileNameWithoutExtension(audioFile.metadata["<filename>"])
+        else:
+            filePath += os.sep + audioFile.getTagsValue(self.output[1])
+
+        filePath += self.tool.getExtension()
+        
+        filePath = os.path.normpath(filePath)
+
+        return filePath
