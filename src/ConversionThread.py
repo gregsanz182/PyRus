@@ -13,7 +13,7 @@ class ConversionThread(threading.Thread):
         self.tool = tool
         self.output = output
         self.threadsList = []
-        self.threadsNum = 1
+        self.threadsNum = 2
         self.state = 0
         self.currentThreadNum = 0
         self.w = ConversionDialog()

@@ -1,6 +1,6 @@
 from PySide.QtGui import QWidget, QHBoxLayout, QStackedLayout, QVBoxLayout, QComboBox, \
 QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame, QLabel, \
-QToolButton
+QToolButton, QProgressBar
 from PySide.QtCore import Qt, Signal, QSize
 
 class CustomHFormLayout(QHBoxLayout):
@@ -217,3 +217,30 @@ class CustomCounterWidget(QWidget):
             self.actualValue -= 1
             self.numLineEdit.setText(str(self.actualValue))
             self.counterChanged.emit(self.actualValue)
+
+class ConversionTaskProgressBar(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.free = True
+        self.initComponents()
+
+    def initComponents(self):
+        self.layout = QVBoxLayout(self)
+        self.layout.setAlignment(Qt.AlignTop)
+
+        self.label = QLabel()
+        self.layout.addWidget(self.label)
+
+        self.progressBar = QProgressBar()
+        self.progressBar.maximum(100)
+        self.progressBar.minimum(0)
+        self.progressBar.value(0)
+        self.progressBar.setFixedHeight(8)
+        self.layout.addWidget(self.progressBar)
+
+    def updateProgress(self, progressIncreased: int):
+        self.progressBar.setValue(self.progressBar.value() + progressIncreased)
+
+    def changeLabel(self, string: str):
+        self.label.setText(string)
