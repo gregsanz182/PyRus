@@ -228,6 +228,7 @@ class ConversionTaskBar(QWidget):
     def initComponents(self):
         self.layout = QVBoxLayout(self)
         self.layout.setAlignment(Qt.AlignTop)
+        self.layout.setContentsMargins(0, 0, 0, 0)
 
         self.label = QLabel()
         self.layout.addWidget(self.label)
@@ -239,7 +240,7 @@ class ConversionTaskBar(QWidget):
         self.progressBar.setFixedHeight(8)
         self.layout.addWidget(self.progressBar)
 
-    def updateProgress(self, progressIncreased: int, dh, sj):
+    def updateProgress(self, progressIncreased: int):
         self.progressBar.setValue(self.progressBar.value() + progressIncreased)
         if self.progressBar.value() >= self.progressBar.maximum():
             self.busy = False

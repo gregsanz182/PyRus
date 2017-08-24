@@ -8,7 +8,8 @@ from Tools import Tools
 class TaskThread(QObject, threading.Thread):
 
     dirLock = threading.Lock()
-    signal = Signal(int, int, str)
+    updateSignal = Signal(int, int, str)
+    
 
     def __init__(self, threadNumber, audioFile, tool, outputPath):
         QObject.__init__(self)
@@ -17,6 +18,7 @@ class TaskThread(QObject, threading.Thread):
         self.audioFile = audioFile
         self.tool = tool
         self.outputPath = outputPath
+        self.progress = 0
 
     def run(self):
         decProcess = self.audioFile.prepareProcess()
@@ -36,4 +38,5 @@ class TaskThread(QObject, threading.Thread):
         decProcess.waitForFinished(-1)
         encProcess.waitForFinished(-1)
 
-        self.signal.emit(100, self.threadNumber, "Completed")
+        self.updateSignal.emit(100-self.progress, self.threadNumber, "Completed")
+        self.progress = 100

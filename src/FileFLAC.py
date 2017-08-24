@@ -19,7 +19,7 @@ class FileFLAC (FileAudio):
 
         return False
 
-    def prepareProcess(self) -> CustomProcess:
+    def runProcess(self) -> CustomProcess:
         process = CustomProcess()
         process.setProgram("resources\\tools\\flac")
         process.extendArg(["--decode", "-c", self.metadata["<path>"]])
