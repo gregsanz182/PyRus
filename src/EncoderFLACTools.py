@@ -55,6 +55,7 @@ class EncoderFLACTools(EncoderTools):
         process = CustomProcess()
         process.setProgram("resources\\tools\\flac")
         process.appendArg("--totally-silent")
+        process.appendArg("-f")
         if self.containerBox.currentIndex() == 1:
             process.appendArg("--ogg")
         process.appendArg("-"+self.compressionLevels[self.compressionLevelBox.currentIndex()])

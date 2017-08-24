@@ -218,11 +218,11 @@ class CustomCounterWidget(QWidget):
             self.numLineEdit.setText(str(self.actualValue))
             self.counterChanged.emit(self.actualValue)
 
-class ConversionTaskWidget(QWidget):
+class ConversionTaskBar(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.free = True
+        self.busy = False
         self.initComponents()
 
     def initComponents(self):
@@ -233,14 +233,27 @@ class ConversionTaskWidget(QWidget):
         self.layout.addWidget(self.label)
 
         self.progressBar = QProgressBar()
-        self.progressBar.maximum(100)
-        self.progressBar.minimum(0)
-        self.progressBar.value(0)
+        self.progressBar.setMaximum(100)
+        self.progressBar.setMinimum(0)
+        self.progressBar.setValue(0)
         self.progressBar.setFixedHeight(8)
         self.layout.addWidget(self.progressBar)
 
-    def updateProgress(self, progressIncreased: int):
+    def updateProgress(self, progressIncreased: int, dh, sj):
         self.progressBar.setValue(self.progressBar.value() + progressIncreased)
+        if self.progressBar.value() >= self.progressBar.maximum():
+            self.busy = False
+
+    def resetBar(self, labelText=''):
+        self.changeLabel(labelText)
+        self.progressBar.setValue(0)
+        self.busy = True
 
     def changeLabel(self, string: str):
         self.label.setText(string)
+
+    def isBusy(self) -> bool:
+        return self.busy
+
+    def makeConection(self, signal):
+        signal.connect(self.updateProgress)

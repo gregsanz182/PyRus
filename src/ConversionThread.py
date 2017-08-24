@@ -47,9 +47,11 @@ class ConversionThread(threading.Thread):
 
     def addAndStartTask(self):
         audioFile = self.listFiles.pop()
-        threadAux = TaskThread(self.currentThreadNum, audioFile, self.tool, self.prepareFilePath(audioFile))
+        filePath = self.prepareFilePath(audioFile)
+        threadAux = TaskThread(self.currentThreadNum, audioFile, self.tool, filePath)
         self.currentThreadNum += 1
         self.threadsList.append(threadAux)
+        self.w.connectTask(threadAux.signal, os.path.basename(filePath))
         threadAux.start()
 
     def prepareFilePath(self, audioFile) -> str:
@@ -65,5 +67,7 @@ class ConversionThread(threading.Thread):
         filePath += self.tool.getExtension()
         
         filePath = os.path.normpath(filePath)
+
+        Tools.makeFolder(filePath)
 
         return filePath

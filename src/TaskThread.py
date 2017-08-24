@@ -1,16 +1,18 @@
 import threading
 import os
-from PySide.QtCore import QProcess
+from PySide.QtCore import QProcess, Signal, QObject
 from EncoderTools import EncoderTools
 from CustomProcess import CustomProcess
 from Tools import Tools
 
-class TaskThread(threading.Thread):
+class TaskThread(QObject, threading.Thread):
 
     dirLock = threading.Lock()
+    signal = Signal(int, int, str)
 
     def __init__(self, threadNumber, audioFile, tool, outputPath):
-        super().__init__()
+        QObject.__init__(self)
+        threading.Thread.__init__(self)
         self.threadNumber = threadNumber
         self.audioFile = audioFile
         self.tool = tool
@@ -33,3 +35,5 @@ class TaskThread(threading.Thread):
 
         decProcess.waitForFinished(-1)
         encProcess.waitForFinished(-1)
+
+        self.signal.emit(100, self.threadNumber, "Completed")

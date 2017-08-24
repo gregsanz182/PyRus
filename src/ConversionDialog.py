@@ -1,9 +1,11 @@
 import threading
 from PySide.QtGui import QDialog, QDesktopWidget, QProgressBar, QVBoxLayout, QTableWidget, QFormLayout, QLabel
-from PySide.QtCore import Qt
-from GuiTools import CustomCounterWidget
+from PySide.QtCore import Qt, Signal
+from GuiTools import CustomCounterWidget, ConversionTaskBar
 
 class ConversionDialog(QDialog):
+
+    connectBarSignal = Signal(Signal, str)
 
     def __init__(self):
         super().__init__()
@@ -12,9 +14,16 @@ class ConversionDialog(QDialog):
         self.setWindowTitle("Converting Files")
         self.lock = threading.Lock()
         self.initComponents()
+        self.makeConections()
+        self.bars = list()
 
     def initComponents(self):
         self.layout = QVBoxLayout(self)
+
+        self.barsLayout = QVBoxLayout()
+        self.barsLayout.setAlignment(Qt.AlignTop)
+        self.barsLayout.setContentsMargins(0, 0, 0, 0)
+        self.layout.addLayout(self.barsLayout)
 
         self.tableList = QTableWidget()
         self.layout.addWidget(self.tableList)
@@ -26,6 +35,9 @@ class ConversionDialog(QDialog):
         self.layout.addWidget(self.totalProgressBar)
         self.totalProgressBar.setMinimum(0)
 
+    def makeConections(self):
+        self.connectBarSignal.connect(self.connectTaskSlot)
+
     def setTotalProgressBarMaximum(self, value: int):
         with self.lock:
             self.totalProgressBar.setMaximum(value)
@@ -33,3 +45,22 @@ class ConversionDialog(QDialog):
     def setTotalProgressBarValue(self, value: int):
         with self.lock:
             self.totalProgressBar.setValue(value)
+
+    def connectTaskSlot(self, signal, labelText):
+        bar = None
+        for itemBar in self.bars:
+            if itemBar.isBusy() is False:
+                bar = itemBar
+                break
+
+        if bar is None:
+            bar = ConversionTaskBar()
+            self.barsLayout.addWidget(bar)
+            self.bars.append(bar)
+
+        bar.resetBar(labelText)
+        bar.makeConection(signal)
+        bar.setVisible(True)
+
+    def connectTask(self, signal, labelText):
+        self.connectBarSignal.emit(signal, labelText)

@@ -21,3 +21,10 @@ class Tools():
         if pointIndex != -1:
             return filename[:pointIndex]
         return filename
+
+    @classmethod
+    def makeFolder(self, path: str):
+        dirName = os.path.dirname(path)
+        print(dirName)
+        if os.path.exists(dirName) is False:
+            os.makedirs(dirName)
