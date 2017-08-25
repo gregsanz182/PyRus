@@ -1,10 +1,10 @@
+import os
 from PySide.QtGui import QFrame, QVBoxLayout, QHBoxLayout, \
 QLineEdit, QToolButton, QIcon, QLabel, QFileDialog
 from PySide.QtCore import QSize, Qt
 from EncoderMP3Tools import EncoderMP3Tools
 from EncoderFLACTools import EncoderFLACTools
 from GuiTools import CustomComboBox, WidgetList, CheckFormWidget, CustomHFormLayout
-import os
 
 class BottomFrame(QFrame):
 

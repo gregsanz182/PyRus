@@ -1,6 +1,6 @@
 import os
 
-class Tools():
+class OSTools():
 
     def __init__(self):
         pass
@@ -25,6 +25,23 @@ class Tools():
     @classmethod
     def makeFolder(self, path: str):
         dirName = os.path.dirname(path)
-        print(dirName)
         if os.path.exists(dirName) is False:
             os.makedirs(dirName)
+
+class ProgressObject():
+
+    Task_Prepared = 0
+    Task_Converting = 1
+    Task_Cancelled = 2
+
+    def __init__(self):
+        self.actualProgress = 0
+        self.incrementedProgress = 0
+        self.state = self.Task_Prepared
+
+    def updateProgress(self, progress: int):
+        self.incrementedProgress = progress - self.actualProgress
+        self.actualProgress = progress
+
+    def updateState(self, state: int):
+        self.state = state

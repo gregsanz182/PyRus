@@ -9,7 +9,6 @@ class CustomProcess(QProcess):
 
     def startProcess(self):
         self.start(self.program, self.args)
-        print(self.state())
 
     def setProgram(self, program: str):
         self.program = program

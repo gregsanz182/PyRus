@@ -3,7 +3,7 @@ import time
 import os
 from ConversionDialog import ConversionDialog
 from TaskThread import TaskThread
-from Tools import Tools
+from Tools import OSTools
 
 class ConversionThread(threading.Thread):
 
@@ -29,6 +29,10 @@ class ConversionThread(threading.Thread):
                 if thr.isAlive() is False:
                     self.threadsList.remove(thr)
 
+            idleBars = self.w.visibleBars() - self.threadsNum
+            if idleBars > 0:
+                self.w.hideIdleBars(idleBars)
+
             if len(self.threadsList) <= 0 and len(self.listFiles) <= 0:
                 self.state = 2
             time.sleep(0.1)
@@ -51,16 +55,16 @@ class ConversionThread(threading.Thread):
         threadAux = TaskThread(self.currentThreadNum, audioFile, self.tool, filePath)
         self.currentThreadNum += 1
         self.threadsList.append(threadAux)
-        self.w.connectTask(threadAux.signal, os.path.basename(filePath))
+        self.w.connectTask(threadAux.updateSignal, audioFile.metadata["<path>"])
         threadAux.start()
 
     def prepareFilePath(self, audioFile) -> str:
         filePath = self.output[0]
-        if Tools.isAbsolute(os.path.normpath(filePath)) is False:
+        if OSTools.isAbsolute(os.path.normpath(filePath)) is False:
             filePath = os.path.dirname(audioFile.metadata["<path>"]) + os.sep + filePath
 
         if self.output[1] == "":
-            filePath += os.sep + Tools.getFileNameWithoutExtension(audioFile.metadata["<filename>"])
+            filePath += os.sep + OSTools.getFileNameWithoutExtension(audioFile.metadata["<filename>"])
         else:
             filePath += os.sep + audioFile.getTagsValue(self.output[1])
 
@@ -68,6 +72,6 @@ class ConversionThread(threading.Thread):
         
         filePath = os.path.normpath(filePath)
 
-        Tools.makeFolder(filePath)
+        OSTools.makeFolder(filePath)
 
         return filePath

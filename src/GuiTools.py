@@ -2,6 +2,7 @@ from PySide.QtGui import QWidget, QHBoxLayout, QStackedLayout, QVBoxLayout, QCom
 QSizePolicy, QStyledItemDelegate, QCheckBox, QFormLayout, QLineEdit, QToolButton, QFrame, QLabel, \
 QToolButton, QProgressBar
 from PySide.QtCore import Qt, Signal, QSize
+from Tools import ProgressObject
 
 class CustomHFormLayout(QHBoxLayout):
     """Custom QHBoxLayout that behaves like a QFormLayout. Arranges every item like a form, but with label above the text field.
@@ -237,11 +238,11 @@ class ConversionTaskBar(QWidget):
         self.progressBar.setMaximum(100)
         self.progressBar.setMinimum(0)
         self.progressBar.setValue(0)
-        self.progressBar.setFixedHeight(8)
+        self.progressBar.setFixedHeight(13)
         self.layout.addWidget(self.progressBar)
 
-    def updateProgress(self, progressIncreased: int):
-        self.progressBar.setValue(self.progressBar.value() + progressIncreased)
+    def updateProgress(self, progress: ProgressObject):
+        self.progressBar.setValue(progress.actualProgress)
         if self.progressBar.value() >= self.progressBar.maximum():
             self.busy = False
 

@@ -1,3 +1,4 @@
+import re
 from FileAudio import FileAudio
 from CustomProcess import CustomProcess
 
@@ -19,8 +20,15 @@ class FileFLAC (FileAudio):
 
         return False
 
-    def runProcess(self) -> CustomProcess:
+    def prepareProcess(self) -> CustomProcess:
         process = CustomProcess()
         process.setProgram("resources\\tools\\flac")
         process.extendArg(["--decode", "-c", self.metadata["<path>"]])
         return process
+
+    def analyseProgressLine(self, line: str):
+        okline = re.search(r"[0-9]*% complete", line)
+        if okline:
+            return int(re.search(r"[0-9]*", okline.group(0)).group(0))
+        else:
+            return None

@@ -1,7 +1,7 @@
+import hashlib
 from PySide.QtCore import QProcess, QIODevice, QFile, QByteArray, Qt, QCryptographicHash
 from PySide.QtGui import QPixmap
 from os import path
-import hashlib
 
 class FileAudio():
     """Represents the Audio Files. Contains all the metadata. This class is inherited by the Files Format Classes"""

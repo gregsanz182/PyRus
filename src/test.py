@@ -6,6 +6,7 @@ import hashlib
 import subprocess
 import _thread
 import time
+import re
 
 class MyModel():
 
@@ -15,7 +16,7 @@ class MyModel():
         self.lame = QProcess()
         self.faad.setStandardOutputProcess(self.lame)
         self.faad.setReadChannel(QProcess.StandardError)
-        self.faad.start("resources\\tools\\flac", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassassndra Gemini.flac"])
+        self.faad.start("resources\\tools\\flac", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassandra asdasd.flac"])
         self.lame.start("resources\\tools\\flac", ["-5", "--totally-silent", '--output-name=hah 2a.flac', "-"])
 
         while self.faad.state() != QProcess.NotRunning:
@@ -25,6 +26,8 @@ class MyModel():
 
         self.faad.waitForFinished(-1)
         self.lame.waitForFinished(-1)
+
+        print(self.faad.exitCode())
 
     def leer(self):
         print("aqui")
@@ -41,6 +44,10 @@ class CustomBufferStream():
 
 
 if __name__ == "__main__":
+
+    #regxp = re.compile("[0-9]* complete")
+
+
     """def print_time(threadName, delay):
         count = 0
         while count < 5:
