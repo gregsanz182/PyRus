@@ -16,13 +16,8 @@ class MyModel():
         self.lame = QProcess()
         #self.faad.setStandardOutputProcess(self.lame)
         self.faad.setReadChannel(QProcess.StandardError)
-<<<<<<< HEAD
-        self.faad.start("resources\\tools\\faad", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassassndra Gemini.flac"])
-        #self.lame.start("resources\\tools\\flac", ["-5", "--totally-silent", '--output-name=hah 2a.flac', "-"])
-=======
         self.faad.start("resources\\tools\\flac", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassandra asdasd.flac"])
         self.lame.start("resources\\tools\\flac", ["-5", "--totally-silent", '--output-name=hah 2a.flac', "-"])
->>>>>>> 7a14c74
 
         while self.faad.state() != QProcess.NotRunning:
             self.faad.waitForReadyRead()
