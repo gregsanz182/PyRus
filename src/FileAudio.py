@@ -1,4 +1,5 @@
 import hashlib
+import abc
 from PySide.QtCore import QProcess, QIODevice, QFile, QByteArray, Qt, QCryptographicHash
 from PySide.QtGui import QPixmap
 from os import path
@@ -99,3 +100,11 @@ class FileAudio():
         hash_sha1 = QCryptographicHash(QCryptographicHash.Sha1)
         hash_sha1.addData(data)
         return str(QByteArray.toHex(hash_sha1.result()))
+    
+    @abc.abstractmethod
+    def prepareProcress(self):
+        pass
+
+    @abc.abstractmethod
+    def analyseProgressLine(self, line: str):
+        pass

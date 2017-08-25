@@ -1,3 +1,4 @@
+import re
 from FileAudio import FileAudio
 from CustomProcess import CustomProcess
 
@@ -23,5 +24,12 @@ class FileMP3 (FileAudio):
     def prepareProcess(self) -> CustomProcess:
         process = CustomProcess()
         process.setProgram("resources\\tools\\lame")
-        process.extendArg(["--decode", self.metadata["<path>"], "-"])
+        process.extendArg(["--decode", "--verbose", self.metadata["<path>"], "-"])
         return process
+
+    def analyseProgressLine(self, line: str):
+        okline = re.search(r"Frame# *(?P<current>[0-9]*)/(?P<total>[0-9]*)", line)
+        if okline:
+            return int((int(okline.group("current"))/int(okline.group("total")))*100)
+        else:
+            return None

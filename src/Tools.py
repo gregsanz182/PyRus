@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 
 class OSTools():
 
@@ -40,8 +41,13 @@ class ProgressObject():
         self.state = self.Task_Prepared
 
     def updateProgress(self, progress: int):
-        self.incrementedProgress = progress - self.actualProgress
-        self.actualProgress = progress
+        diff = self.incrementedProgress = progress - self.actualProgress
+        if diff > 0:
+            self.actualProgress = progress
+            self.incrementedProgress = diff
 
     def updateState(self, state: int):
         self.state = state
+
+    def getProgress(self):
+        return deepcopy(self)

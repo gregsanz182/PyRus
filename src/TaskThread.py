@@ -7,7 +7,7 @@ from Tools import ProgressObject
 
 class TaskThread(QObject, threading.Thread):
 
-    updateSignal = Signal(ProgressObject, str)
+    updateSignal = Signal(ProgressObject, int)
 
     def __init__(self, threadNumber, audioFile, tool, outputPath):
         QObject.__init__(self)
@@ -31,15 +31,17 @@ class TaskThread(QObject, threading.Thread):
         while decProcess.state() != QProcess.NotRunning:
             decProcess.waitForReadyRead()
             while decProcess.bytesAvailable() > 0:
-                for line in str(decProcess.readLine()).replace("\b", "\n").splitlines():
+                rl = str(decProcess.readLine())+"\n"
+                for line in rl.splitlines():
                     progValue = self.audioFile.analyseProgressLine(line)
                     if progValue:
                         self.progress.updateProgress(progValue)
-                        self.updateSignal.emit(self.progress, self.threadNumber)
+                        if self.progress.incrementedProgress > 0:
+                            self.updateSignal.emit(self.progress.getProgress(), self.threadNumber)
 
         decProcess.waitForFinished(-1)
         encProcess.waitForFinished(-1)
 
         self.progress.updateProgress(100)
         self.progress.updateState(ProgressObject.Task_Converting)
-        self.updateSignal.emit(self.progress, self.threadNumber)
+        self.updateSignal.emit(self.progress.getProgress(), self.threadNumber)

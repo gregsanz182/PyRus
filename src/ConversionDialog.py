@@ -43,8 +43,10 @@ class ConversionDialog(QDialog):
             self.totalProgressBar.setMaximum(value)
 
     def setTotalProgressBarValue(self, value: int):
-        with self.lock:
-            self.totalProgressBar.setValue(value)
+        self.totalProgressBar.setValue(value)
+
+    def setTotalProgressBarIncrementedValue(self, incrementedValue: int):
+        self.totalProgressBar.setValue(incrementedValue + self.totalProgressBar.value())
 
     def connectTaskSlot(self, signal, labelText):
         bar = None
@@ -66,6 +68,11 @@ class ConversionDialog(QDialog):
         bar.resetBar(labelText)
         bar.makeConection(signal)
         bar.setVisible(True)
+        signal.connect(self.updateGlobalStatus)
+
+    def updateGlobalStatus(self, progress, threadNumber):
+        with self.lock:
+            self.setTotalProgressBarIncrementedValue(progress.incrementedProgress)
 
     def connectTask(self, signal, labelText):
         self.connectBarSignal.emit(signal, labelText)

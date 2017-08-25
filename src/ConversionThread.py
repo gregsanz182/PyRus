@@ -14,10 +14,11 @@ class ConversionThread(threading.Thread):
         self.tool = tool
         self.output = output
         self.threadsList = []
-        self.threadsNum = 2
+        self.threadsNum = 1
         self.state = 0
         self.currentThreadNum = 0
         self.w = ConversionDialog()
+        self.w.setTotalProgressBarMaximum(len(self.listFiles)*100)
         self.makeConnections()
 
     def run(self):

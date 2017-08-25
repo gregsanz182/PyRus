@@ -28,8 +28,8 @@ class FileFLAC (FileAudio):
         return process
 
     def analyseProgressLine(self, line: str):
-        okline = re.search(r"[0-9]*% complete", line)
+        okline = re.search(r"(?P<value>[0-9]*)% complete", line)
         if okline:
-            return int(re.search(r"[0-9]*", okline.group(0)).group(0))
+            return int(okline.group("value"))
         else:
             return None
