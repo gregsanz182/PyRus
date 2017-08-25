@@ -69,9 +69,7 @@ class EncoderFLACTools(EncoderTools):
         process.extendArg(self.getTagArgs(audioFile))
         process.appendArg('--output-name={0}'.format(outputPath))
         process.appendArg("-")
-
-        for arg in process.args:
-            print(arg)
+        
         return process
 
     def getTagArgs(self, audioFile) -> list:

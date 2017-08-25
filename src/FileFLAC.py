@@ -1,3 +1,4 @@
+import re
 from FileAudio import FileAudio
 from CustomProcess import CustomProcess
 from PySide.QtCore import QProcess
@@ -20,21 +21,15 @@ class FileFLAC (FileAudio):
 
         return False
 
-    def runProcess(self, signal, encProcess):
-        decProcess = CustomProcess()
-        decProcess.setProgram("resources\\tools\\flac")
-        decProcess.extendArg(["--decode", "-c", self.metadata["<path>"]])
+    def prepareProcess(self) -> CustomProcess:
+        process = CustomProcess()
+        process.setProgram("resources\\tools\\flac")
+        process.extendArg(["--decode", "-c", self.metadata["<path>"]])
+        return process
 
-        decProcess.setStandardOutputProcess(encProcess)
-        decProcess.setReadChannel(QProcess.StandardError)
-
-        decProcess.startProcess()
-        encProcess.startProcess()
-
-        while decProcess.state() != QProcess.NotRunning:
-            decProcess.waitForReadyRead()
-            while decProcess.bytesAvailable() > 0:
-                print(str(decProcess.readLine()).replace("\b", ""))
-
-        decProcess.waitForFinished(-1)
-        encProcess.waitForFinished(-1)
+    def analyseProgressLine(self, line: str):
+        okline = re.search(r"[0-9]*% complete", line)
+        if okline:
+            return int(re.search(r"[0-9]*", okline.group(0)).group(0))
+        else:
+            return None

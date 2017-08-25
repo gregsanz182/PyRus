@@ -49,9 +49,14 @@ class ConversionDialog(QDialog):
     def connectTaskSlot(self, signal, labelText):
         bar = None
         for itemBar in self.bars:
-            if itemBar.isBusy() is False:
+            if itemBar.isBusy() is False and itemBar.isVisible():
                 bar = itemBar
                 break
+        if bar is None:
+            for itemBar in self.bars:
+                if itemBar.isBusy() is False:
+                    bar = itemBar
+                    break
 
         if bar is None:
             bar = ConversionTaskBar()
@@ -64,3 +69,15 @@ class ConversionDialog(QDialog):
 
     def connectTask(self, signal, labelText):
         self.connectBarSignal.emit(signal, labelText)
+
+    def hideIdleBars(self, amount: int):
+        for bar in self.bars:
+            if amount > 0:
+                if bar.isBusy() is False and bar.isVisible():
+                    bar.setVisible(False)
+                    amount -= 1
+            else:
+                break
+
+    def visibleBars(self) -> int:
+        return sum(1 for bar in self.bars if bar.isVisible() is True)

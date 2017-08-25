@@ -110,12 +110,12 @@ class MetadataFrame(QFrame):
             self.titleBox.setTextToMetadata(item)
             self.artistBox.setTextToMetadata(item)
             self.albumBox.setTextToMetadata(item)
+            self.albumArtistBox.setTextToMetadata(item)
             self.yearBox.setTextToMetadata(item)
             self.genreBox.setTextToMetadata(item)
             self.trackBox.setTextToMetadata(item)
             self.discBox.setTextToMetadata(item)
             self.commentBox.setTextToMetadata(item)
-            self.artistBox.setTextToMetadata(item)
 
         self.changesSaved.emit()
 
