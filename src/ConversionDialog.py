@@ -28,7 +28,7 @@ class ConversionDialog(QDialog):
         self.tableList = QTableWidget()
         self.layout.addWidget(self.tableList)
 
-        self.numThreadsWidget = CustomCounterWidget("Number of Converters:", 1, 1, 8)
+        self.numThreadsWidget = CustomCounterWidget("Number of Converters:", 1, 1, 5)
         self.layout.addWidget(self.numThreadsWidget)
 
         self.totalProgressBar = QProgressBar()
