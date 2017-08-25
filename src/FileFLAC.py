@@ -1,5 +1,6 @@
 from FileAudio import FileAudio
 from CustomProcess import CustomProcess
+from PySide.QtCore import QProcess
 
 class FileFLAC (FileAudio):
     """Represents FLAC Audio Files. Contains methods that handles this format.
@@ -19,8 +20,21 @@ class FileFLAC (FileAudio):
 
         return False
 
-    def runProcess(self) -> CustomProcess:
-        process = CustomProcess()
-        process.setProgram("resources\\tools\\flac")
-        process.extendArg(["--decode", "-c", self.metadata["<path>"]])
-        return process
+    def runProcess(self, signal, encProcess):
+        decProcess = CustomProcess()
+        decProcess.setProgram("resources\\tools\\flac")
+        decProcess.extendArg(["--decode", "-c", self.metadata["<path>"]])
+
+        decProcess.setStandardOutputProcess(encProcess)
+        decProcess.setReadChannel(QProcess.StandardError)
+
+        decProcess.startProcess()
+        encProcess.startProcess()
+
+        while decProcess.state() != QProcess.NotRunning:
+            decProcess.waitForReadyRead()
+            while decProcess.bytesAvailable() > 0:
+                print(str(decProcess.readLine()).replace("\b", ""))
+
+        decProcess.waitForFinished(-1)
+        encProcess.waitForFinished(-1)

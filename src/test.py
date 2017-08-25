@@ -13,10 +13,10 @@ class MyModel():
         super().__init__()
         self.faad = QProcess()
         self.lame = QProcess()
-        self.faad.setStandardOutputProcess(self.lame)
+        #self.faad.setStandardOutputProcess(self.lame)
         self.faad.setReadChannel(QProcess.StandardError)
-        self.faad.start("resources\\tools\\flac", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassassndra Gemini.flac"])
-        self.lame.start("resources\\tools\\flac", ["-5", "--totally-silent", '--output-name=hah 2a.flac', "-"])
+        self.faad.start("resources\\tools\\faad", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassassndra Gemini.flac"])
+        #self.lame.start("resources\\tools\\flac", ["-5", "--totally-silent", '--output-name=hah 2a.flac', "-"])
 
         while self.faad.state() != QProcess.NotRunning:
             self.faad.waitForReadyRead()
@@ -24,7 +24,7 @@ class MyModel():
                 print(str(self.faad.readLine()).replace("\b", ""))
 
         self.faad.waitForFinished(-1)
-        self.lame.waitForFinished(-1)
+        #self.lame.waitForFinished(-1)
 
     def leer(self):
         print("aqui")
