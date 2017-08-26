@@ -9,8 +9,8 @@ from GuiTools import CustomComboBox, WidgetList, CheckFormWidget, CustomHFormLay
 class BottomFrame(QFrame):
 
     def __init__(self, parent=None):
-        """Top Frame of the application.
-        Provides the set of times that handles the preferences of conversion and output"""
+        """Bottom Frame of the application.
+        Provides the set of items that handles the preferences of conversion and output"""
         super().__init__(parent)
         self.setStyleSheet("QFrame#bottomFrame {border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
         self.setObjectName("bottomFrame")
@@ -27,10 +27,14 @@ class BottomFrame(QFrame):
         self.makeConnections()
 
     def initComponents(self):
+        """Initializes the components"""
+
+        #Encoders Tools initialization
         self.mp3tools = EncoderMP3Tools()
         self.flactools = EncoderFLACTools()
         
     def setFormatPreferencesLayout(self):
+        """Sets the layout that contains the items that handles the format preferences"""
         self.formatWidgets = WidgetList()
         self.formatLayout = QVBoxLayout()
         self.formatLayout.setSpacing(6)
@@ -54,6 +58,7 @@ class BottomFrame(QFrame):
         self.formatLayout.addStretch()
 
     def setOutputPreferencesLayout(self):
+        """Sets the layout that contains the items that handles the format preferences"""
         self.outputLayout = QVBoxLayout()
         self.outputLayout.setContentsMargins(0, 0, 0, 0)
         self.outputLayout.setSpacing(6)
@@ -78,25 +83,29 @@ class BottomFrame(QFrame):
         self.outputLayout.addStretch()
 
     def setStartButton(self):
+        """Sets the button that triggers de conversion process"""
         self.startButton = QToolButton()
         self.startButton.setIcon(QIcon("resources/imgs/startConvert.png"))
         self.startButton.setIconSize(QSize(59, 29))
         self.startButton.setText("Start Conversion")
         self.startButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.startButton.setStyleSheet("QToolButton {padding: 0px 16px 7px 16px;}")
-        #self.startButton.setFixedWidth(80)
         self.layout.addWidget(self.startButton, alignment=Qt.AlignBottom)
 
     def makeConnections(self):
+        """Makes the connections between the signals and slots of the frame components."""
         self.formatBox.currentIndexChanged.connect(self.formatWidgets.showOnlyAWidget)
         self.outputFolderButton.clicked.connect(self.selectOutputFolder)
 
     def selectOutputFolder(self):
+        """Opens a QFileDialog that allows the selection of the output folder"""
         path = QFileDialog.getExistingDirectory(self, "Select Folder", os.getcwd())
         if len(path) > 0:
             self.outputFolderText.setText(path)
 
     def getOutputPreferences(self) -> tuple:
+        """Returns the output preferences as a Tuple. The first position is the
+        output folder and the second position is the file name template"""
         if self.fileNameWidget.getState() is Qt.Checked:
             template = self.fileNameText.text()
         else:
@@ -108,6 +117,7 @@ class BottomFrame(QFrame):
         return tuple([folder, template])
 
     def getTool(self):
+        """Returns the active tool"""
         if self.formatBox.currentIndex() == 0:
             return self.flactools
         elif self.formatBox.currentIndex() == 1:

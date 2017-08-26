@@ -1,15 +1,15 @@
+import os
 from PySide.QtGui import QWidget, QVBoxLayout, QMainWindow, QStatusBar, QHBoxLayout, \
 QFileDialog, QProgressDialog
 from PySide.QtCore import QProcess, Qt
 from TopFrame import TopFrame
 from MetadataFrame import MetadataFrame
-from FileListTable import FileListTable, FileListModel
+from FileListTable import FileListTable
 from BottomFrame import BottomFrame
 from FileMP3 import FileMP3
 from FileAAC import FileAAC
 from FileFLAC import FileFLAC
 from ConversionThread import ConversionThread
-import os
 
 class MainWindow(QMainWindow):
     """Main Windows of the Application"""
@@ -35,7 +35,8 @@ class MainWindow(QMainWindow):
         self.stBar = QStatusBar()
         self.stBar.showMessage('Ready')
         self.setStatusBar(self.stBar)
-        self.stBar.setStyleSheet("QStatusBar#statusbar {border-top: 1px solid #ADADAD; color: #333333; background-color: #EEEEEE;}")
+        self.stBar.setStyleSheet("QStatusBar#statusbar {border-top: 1px solid #ADADAD; \
+                                  color: #333333; background-color: #EEEEEE;}")
         self.stBar.setObjectName("statusbar")
         self.stBar.setMinimumHeight(25)
 
@@ -58,11 +59,11 @@ class MainWindow(QMainWindow):
         #MetadataFrame or right side of  the Central Widget
         self.metadataFrame = MetadataFrame()
         self.centralWidgetLayout.addWidget(self.metadataFrame)
-        
+
         #Top frame
         self.topFrame = TopFrame()
         self.leftLayout.addWidget(self.topFrame)
-        
+
         #File List Table
         self.fileListTable = FileListTable(self.fileList)
         self.leftLayout.addWidget(self.fileListTable)
@@ -78,12 +79,9 @@ class MainWindow(QMainWindow):
         self.bottomFrame.startButton.clicked.connect(self.startConversion)
 
     def startConversion(self):
-        win = ConversionThread(self.fileList, self.bottomFrame.getTool(), self.bottomFrame.getOutputPreferences())
-        win.beginThread()
-
-    def updateModel(self):
-        indexes = self.fileListSelectionModel.selectedIndexes()
-        self.fileListModel.dataChanged.emit(indexes[0], indexes[len(indexes)-1])
+        """Initializes the conversion dialog and starts the conversion thread"""
+        conversionThread = ConversionThread(self.fileList, self.bottomFrame.getTool(), self.bottomFrame.getOutputPreferences())
+        conversionThread.beginThread()
 
     def addFiles(self):
         """Opens a QFileDialog and imports the selected files.
