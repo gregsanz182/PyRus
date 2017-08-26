@@ -2,10 +2,13 @@ from PySide.QtGui import QWidget, QLabel
 from EncoderTools import EncoderTools
 from GuiTools import CustomComboBox, WidgetList, CustomHFormLayout
 from FileAudio import FileAudio
+from Tools import CustomProcess
 
 class EncoderMP3Tools(EncoderTools):
+    """Provides Tools like Widgets, methods and objects for the MP3 encoder."""
 
     def __init__(self):
+        """Constructor of the class"""
         super().__init__()
         self.bitrateModeWidgets = WidgetList()
 
@@ -61,6 +64,7 @@ class EncoderMP3Tools(EncoderTools):
         self.makeConnections()
 
     def defineItems(self):
+        """Defines the tool items."""
         self.formatName = "MP3 | MPEG Layer-III"
         self.listBitrateModes = ["CBR (Constant Bitrate)", "VBR (Variable Bitrate)", "ABR (Average Bitrate)"]
         self.listBitrates = "8 16 24 32 40 48 56 64 80 96 112 128 144 160 192 224 256 320".split(" ")
@@ -71,13 +75,17 @@ class EncoderMP3Tools(EncoderTools):
         self.listChannels = ["Joint Stereo", "Stereo", "Mono"]
 
     def defineTagsMapping(self):
+        """Defines the mapping of the tags needed for the use in the encoder CLI"""
         pass
 
     def makeConnections(self):
+        """Makes the connection between the signals and slots of the GUI components"""
         self.bitrateModeBox.currentIndexChanged.connect(self.bitrateModeWidgets.showOnlyAWidget)
 
-    def prepareProcess(self, audioFile: FileAudio, outputPath: str):
+    def prepareProcess(self, audioFile: FileAudio, outputPath: str) -> CustomProcess:
+        """Returns the CustomProcess with commandline arguments difined"""
         pass
 
     def getExtension(self) -> str:
-        pass
+        """Returns the extension selected in the GUI"""
+        return ".mp3"
