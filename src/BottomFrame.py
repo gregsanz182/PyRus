@@ -7,10 +7,11 @@ from EncoderFLACTools import EncoderFLACTools
 from GuiTools import CustomComboBox, WidgetList, CheckFormWidget, CustomHFormLayout
 
 class BottomFrame(QFrame):
+    """Bottom Frame of the application.
+    Provides the set of items that handles the preferences of conversion and output"""
 
     def __init__(self, parent=None):
-        """Bottom Frame of the application.
-        Provides the set of items that handles the preferences of conversion and output"""
+        """Constructor of the class"""
         super().__init__(parent)
         self.setStyleSheet("QFrame#bottomFrame {border-top: 1px solid #ADADAD; background-color: #EEEEEE;}")
         self.setObjectName("bottomFrame")
