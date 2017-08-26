@@ -5,8 +5,10 @@ from FileAudio import FileAudio
 from CustomProcess import CustomProcess
 
 class EncoderFLACTools(EncoderTools):
+    """Tools for the FLAC encoder."""
 
     def __init__(self):
+        """Constructor of the class"""
         super().__init__()
         self.layout = CustomHFormLayout(self.preferencesWidget)
         self.layout.setContentsMargin(0)
