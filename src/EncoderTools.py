@@ -25,7 +25,7 @@ class EncoderTools(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def prepareProcess(self, audioFile: FileAudio, outputPath: str) -> CustomProcess:
-        """Returns the CustomProcess ready to run"""
+        """Returns the CustomProcess with commandline arguments difined"""
         pass
 
     @abc.abstractmethod

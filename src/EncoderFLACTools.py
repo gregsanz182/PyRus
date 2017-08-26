@@ -5,7 +5,7 @@ from FileAudio import FileAudio
 from CustomProcess import CustomProcess
 
 class EncoderFLACTools(EncoderTools):
-    """Tools for the FLAC encoder."""
+    """Provides Tools like Widgets, methods and objects for the FLAC encoder."""
 
     def __init__(self):
         """Constructor of the class"""
@@ -25,6 +25,7 @@ class EncoderFLACTools(EncoderTools):
 
 
     def defineItems(self):
+        """Defines the tool items."""
         self.formatName = "FLAC | Free Lossless Audio Codec"
         self.compressionLevels = "8 7 6 5 4 3 2 1 0".split(" ")
         self.compressionLevelsText = []
@@ -40,6 +41,7 @@ class EncoderFLACTools(EncoderTools):
         self.containerList = [".flac", ".ogg"]
 
     def defineTagsMapping(self):
+        """Defines the mapping of the tags needed for the use in the encoder CLI"""
         self.tagsMapping["<title>"] = "TITLE"
         self.tagsMapping["<albumartist>"] = "ALBUMARTIST"
         self.tagsMapping["<artist>"] =  "ARTIST"
@@ -54,6 +56,7 @@ class EncoderFLACTools(EncoderTools):
         self.tagsMapping["<lyrics>"] = "LYRICS"
 
     def prepareProcess(self, audioFile: FileAudio, outputPath: str) -> CustomProcess:
+        """Returns the CustomProcess with commandline arguments difined"""
         process = CustomProcess()
         process.setProgram("resources\\tools\\flac")
         process.appendArg("--totally-silent")
@@ -74,7 +77,9 @@ class EncoderFLACTools(EncoderTools):
         
         return process
 
-    def getTagArgs(self, audioFile) -> list:
+    def getTagArgs(self, audioFile: FileAudio) -> list:
+        """Returns the tags values formatted for the use in the CLI. Recieves the audioFile
+        with its corresponding tags"""
         args = []
         for field, value in audioFile.metadata.items():
             if field in self.tagsMapping and value is not None:
@@ -82,6 +87,7 @@ class EncoderFLACTools(EncoderTools):
         return args
 
     def getExtension(self) -> str:
+        """Returns the extension selected in the GUI"""
         if self.containerBox.currentIndex() == 1:
             return ".ogg"
         return ".flac"
