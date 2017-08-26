@@ -83,7 +83,7 @@ class EncoderMP3Tools(EncoderTools):
         self.bitrateModeBox.currentIndexChanged.connect(self.bitrateModeWidgets.showOnlyAWidget)
 
     def prepareProcess(self, audioFile: FileAudio, outputPath: str) -> CustomProcess:
-        """Returns the CustomProcess with commandline arguments difined"""
+        """Returns the CustomProcess with commandline arguments defined"""
         pass
 
     def getExtension(self) -> str:

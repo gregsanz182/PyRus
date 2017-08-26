@@ -56,7 +56,7 @@ class EncoderFLACTools(EncoderTools):
         self.tagsMapping["<lyrics>"] = "LYRICS"
 
     def prepareProcess(self, audioFile: FileAudio, outputPath: str) -> CustomProcess:
-        """Returns the CustomProcess with commandline arguments difined"""
+        """Returns the CustomProcess with commandline arguments defined"""
         process = CustomProcess()
         process.setProgram("resources\\tools\\flac")
         process.appendArg("--totally-silent")

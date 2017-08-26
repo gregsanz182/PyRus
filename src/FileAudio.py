@@ -3,11 +3,12 @@ import abc
 from PySide.QtCore import QProcess, QIODevice, QFile, QByteArray, Qt, QCryptographicHash
 from PySide.QtGui import QPixmap
 from os import path
+from Tools import CustomProcess
 
 class FileAudio():
     """Represents the Audio Files. Contains all the metadata. This class is inherited by the Files Format Classes"""
 
-    def __init__(self, metaInfo):
+    def __init__(self, metaInfo: list):
         """Constructor of the class. Initializes and sets all the components."""
         self.metadata = {}
         self.metadata["<path>"] = metaInfo["General"]["Complete name"]
@@ -37,7 +38,7 @@ class FileAudio():
             except UnicodeEncodeError:
                 print("Character error in tag {0}".format(key))
 
-    def getAlbumCover(self, metaInfo):
+    def getAlbumCover(self, metaInfo: list) -> tuple:
         """If the file contains a cover, this method extract it and save it to a temporarily 
         location with its hash code as the file name.
         Returns a tuple containing the filename of the cover art, and MIME type of the cover"""
@@ -63,7 +64,7 @@ class FileAudio():
                 return name, coverFormat
         return None, None
 
-    def getTagsValue(self, stringText):
+    def getTagsValue(self, stringText: str) -> str:
         """Given the string 'stringText' returns the values of the tags presented in the string"""
         st = stringText[:]
         for tag, value in self.metadata.items():
@@ -75,7 +76,7 @@ class FileAudio():
 
         return st
 
-    def getCoverWithInfo(self):
+    def getCoverWithInfo(self) -> tuple:
         """Returns tuple containing a QPixmap with the cover of the file and de details about it"""
         if self.metadata["<coverfile>"] is not None:
             pixmap = QPixmap(self.metadata["<coverfile>"])
@@ -86,14 +87,14 @@ class FileAudio():
             return (pixmap, detail)
         return None, "No cover available"
 
-    def getMD5FromFile(self, fileName):
-        """This method is not currently working. Please use Carefuly.
-        Given the file name, returns a cryptographic hash SHA1 from the file"""
+    """def getMD5FromFile(self, fileName: str):
+        #This method is not currently working. Please use Carefuly.
+        #Given the file name, returns a cryptographic hash SHA1 from the file
         f = QFile(fileName)
         f.open(QIODevice.ReadOnly)
         byte = f.readAll()
         f.close()
-        return getSHA1FromBytes(byte)
+        return getSHA1FromBytes(byte)"""
 
     def getSHA1FromBytes(self, data):
         """Given the data bytes, returns a Cryptographic Hash SHA1 of the data"""
@@ -102,9 +103,11 @@ class FileAudio():
         return str(QByteArray.toHex(hash_sha1.result()))
     
     @abc.abstractmethod
-    def prepareProcress(self):
+    def prepareProcress(self) -> CustomProcess:
+        """Returns the CustomProcess with commandline arguments defined"""
         pass
 
     @abc.abstractmethod
-    def analyseProgressLine(self, line: str):
+    def analyseProgressLine(self, line: str) -> int:
+        """Interprets the line ripped from the CLI"""
         pass
