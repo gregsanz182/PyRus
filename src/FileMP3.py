@@ -1,6 +1,5 @@
 import re
 from FileAudio import FileAudio
-from CustomProcess import CustomProcess
 from Tools import CustomProcess
 
 class FileMP3 (FileAudio):

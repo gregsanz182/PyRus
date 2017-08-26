@@ -16,7 +16,7 @@ class MyModel():
         self.lame = QProcess()
         #self.faad.setStandardOutputProcess(self.lame)
         self.faad.setReadChannel(QProcess.StandardError)
-        self.faad.start("resources\\tools\\lame", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\06- Cassandra asdasd.flac"])
+        self.faad.start("resources\\tools\\faad", ["--decode", "-c", "C:\\Users\\fmlia\\Desktop\\aaa\\aac\\11- Silent Flight Parliament.m4a"])
         self.lame.start("resources\\tools\\flac", ["-5", "--totally-silent", '--output-name=hah 2a.flac', "-"])
 
         while self.faad.state() != QProcess.NotRunning:
@@ -80,15 +80,15 @@ if __name__ == "__main__":
 
     lame.close()"""
 
-    #h = MyModel()
+    h = MyModel()
 
-    h = subprocess.Popen('resources\\tools\\lame --decode --verbose "E:\\Musica\\Album\\Alient Ant Farm\\02- ANThology (2001)\\02- Movies.mp3" | resources\\tools\\flac --totally-silent -f --output-name=test2.flac -', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    """h = subprocess.Popen('resources\\tools\\lame --decode --verbose "E:\\Musica\\Album\\Alient Ant Farm\\02- ANThology (2001)\\02- Movies.mp3" | resources\\tools\\flac --totally-silent -f --output-name=test2.flac -', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
     while True:
         output = h.stdout.read(50)
         if len(output) <= 0 and h.poll() is not None:
             break
-        print(output)
+        print(output)"""
 
     """h = subprocess.Popen(['flac', '--decode', '-c', 'C:\\Users\\fmlia\\Desktop\\06- Cassandra Gemini.flac'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     h2 = subprocess.Popen(['lame', '--quiet', '-', 'test2.mp3'], stdin=h.stdout)

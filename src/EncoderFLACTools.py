@@ -2,7 +2,7 @@ from PySide.QtGui import QLabel
 from EncoderTools import EncoderTools
 from GuiTools import CustomComboBox, CustomHFormLayout
 from FileAudio import FileAudio
-from CustomProcess import CustomProcess
+from Tools import CustomProcess
 
 class EncoderFLACTools(EncoderTools):
     """Provides Tools like Widgets, methods and objects for the FLAC encoder."""

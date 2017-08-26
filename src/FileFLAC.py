@@ -1,6 +1,5 @@
 import re
 from FileAudio import FileAudio
-from CustomProcess import CustomProcess
 from PySide.QtCore import QProcess
 from Tools import CustomProcess
 

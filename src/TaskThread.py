@@ -1,8 +1,9 @@
 import threading
 import os
+import codecs
+import sys
 from PySide.QtCore import QProcess, Signal, QObject
 from EncoderTools import EncoderTools
-from CustomProcess import CustomProcess
 from Tools import ProgressObject
 
 class TaskThread(QObject, threading.Thread):
@@ -31,13 +32,17 @@ class TaskThread(QObject, threading.Thread):
         while decProcess.state() != QProcess.NotRunning:
             decProcess.waitForReadyRead()
             while decProcess.bytesAvailable() > 0:
-                rl = str(decProcess.readLine())+"\n"
-                for line in rl.splitlines():
-                    progValue = self.audioFile.analyseProgressLine(line)
-                    if progValue:
-                        self.progress.updateProgress(progValue)
-                        if self.progress.incrementedProgress > 0:
-                            self.updateSignal.emit(self.progress.getProgress(), self.threadNumber)
+                try:
+                    rl = str(decProcess.readLine())
+                    rl += "\n"
+                    for line in rl.splitlines():
+                        progValue = self.audioFile.analyseProgressLine(line)
+                        if progValue:
+                            self.progress.updateProgress(progValue)
+                            if self.progress.incrementedProgress > 0:
+                                self.updateSignal.emit(self.progress.getProgress(), self.threadNumber)
+                except:
+                    pass
 
         decProcess.waitForFinished(-1)
         encProcess.waitForFinished(-1)
