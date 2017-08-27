@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     lame.close()"""
 
-    h = MyModel()
+    #h = MyModel()
 
     """h = subprocess.Popen('resources\\tools\\lame --decode --verbose "E:\\Musica\\Album\\Alient Ant Farm\\02- ANThology (2001)\\02- Movies.mp3" | resources\\tools\\flac --totally-silent -f --output-name=test2.flac -', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
@@ -104,10 +104,10 @@ if __name__ == "__main__":
         print(output)"""
 
 
-    """try:
+    try:
         mainApp = QApplication(sys.argv)
 
-        mainWindow = MyModel()
+        mainWindow = QSpinBox()
         mainWindow.show()
 
         mainApp.exec_()
@@ -117,6 +117,6 @@ if __name__ == "__main__":
     except SystemExit:
         print("Closing window...")
     except Exception:
-        print(sys.exc_info()[1])"""
+        print(sys.exc_info()[1])
 
 

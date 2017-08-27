@@ -1,8 +1,9 @@
 import hashlib
 import abc
+import imghdr
+import os
 from PySide.QtCore import QProcess, QIODevice, QFile, QByteArray, Qt, QCryptographicHash
 from PySide.QtGui import QPixmap
-from os import path
 from Tools import CustomProcess
 
 class FileAudio():
@@ -28,7 +29,7 @@ class FileAudio():
         self.metadata["<coverfile>"], self.metadata["<covermime>"] = self.getAlbumCover(metaInfo)
         self.metadata["<lyrics>"] = metaInfo["General"].get("Lyrics")
         self.metadata["<lenght>"] = metaInfo["Audio"].get("Duration")
-        self.metadata["<filename>"] = path.basename(self.metadata["<path>"])
+        self.metadata["<filename>"] = os.path.basename(self.metadata["<path>"])
 
     def printTags(self):
         """Prints of all the available tags"""
@@ -50,17 +51,24 @@ class FileAudio():
             if process.canReadLine():
                 cad = process.readLine()
                 byte = QByteArray.fromBase64(cad)
-                name = self.getSHA1FromBytes(byte)
+                name = os.getcwd() + os.sep + self.getSHA1FromBytes(byte)
                 if coverFormat == "image/jpeg":
                     name += ".jpg"
                 elif coverFormat == "image/png":
                     name += ".png"
                 elif coverFormat == "image/gif":
                     name += ".gif"
+                name = os.path.normpath(name)
                 f = QFile(name)
                 f.open(QIODevice.WriteOnly)
                 f.write(byte)
                 f.close()
+
+                if coverFormat is None:
+                    imageFormat = imghdr.what(name)
+                    if imageFormat in ['jpeg', 'gif', 'png']:
+                        coverFormat = "image/{0}".format(imageFormat)
+
                 return name, coverFormat
         return None, None
 
@@ -78,12 +86,12 @@ class FileAudio():
 
     def getCoverWithInfo(self) -> tuple:
         """Returns tuple containing a QPixmap with the cover of the file and de details about it"""
-        if self.metadata["<coverfile>"] is not None:
+        if self.metadata["<coverfile>"]:
             pixmap = QPixmap(self.metadata["<coverfile>"])
             detail = "{0}x{1}".format(pixmap.width(), pixmap.height())
-            if self.metadata["<covermime>"] is not None:
+            if self.metadata["<covermime>"]:
                 detail += "   {0}".format(self.metadata["<covermime>"])
-            detail += "   {:.1f} KB".format(path.getsize(self.metadata["<coverfile>"])/1024)
+            detail += "   {:.1f} KB".format(os.path.getsize(self.metadata["<coverfile>"])/1024)
             return (pixmap, detail)
         return None, "No cover available"
 

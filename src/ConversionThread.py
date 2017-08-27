@@ -41,7 +41,7 @@ class ConversionThread(threading.Thread):
     def run(self):
         """Thread activity. Is here where the thread do its task"""
         while self.state == 1:
-            if len(self.threadsList) < self.threadsNum and len(self.listFiles) > 0:
+            if len(self.threadsList) < self.threadsNum and self.currentThreadNum < len(self.listFiles):
                 self.addAndStartTask()
 
             for thr in self.threadsList[:]:
@@ -52,7 +52,7 @@ class ConversionThread(threading.Thread):
             if idleBars > 0:
                 self.conversionDialog.hideIdleBars(idleBars)
 
-            if len(self.threadsList) <= 0 and len(self.listFiles) <= 0:
+            if len(self.threadsList) <= 0 and self.currentThreadNum >= len(self.listFiles):
                 self.state = 2
             time.sleep(0.1)
         
@@ -75,13 +75,13 @@ class ConversionThread(threading.Thread):
     def addAndStartTask(self):
         """Adds a thread to the list of threads and starts it.
         Also makes the connection to the corresponding bar of the thread"""
-        audioFile = self.listFiles.pop()
+        audioFile = self.listFiles[self.currentThreadNum]
         filePath = self.prepareFilePath(audioFile)
         threadAux = TaskThread(self.currentThreadNum, audioFile, self.tool, filePath)
-        self.currentThreadNum += 1
         self.threadsList.append(threadAux)
         self.conversionDialog.connectTask(threadAux.updateSignal, audioFile.metadata["<path>"])
         threadAux.start()
+        self.currentThreadNum += 1
 
     def prepareFilePath(self, audioFile: FileAudio) -> str:
         """Prepare the output file path of the file passed as argument"""

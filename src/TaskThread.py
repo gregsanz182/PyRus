@@ -24,7 +24,11 @@ class TaskThread(QObject, threading.Thread):
         encProcess = self.tool.prepareProcess(self.audioFile, self.outputPath)
 
         decProcess.setStandardOutputProcess(encProcess)
+        encProcess.setProcessChannelMode(QProcess.ForwardedChannels)
         decProcess.setReadChannel(QProcess.StandardError)
+
+        decProcess.printArgs()
+        encProcess.printArgs()
 
         decProcess.startProcess()
         encProcess.startProcess()

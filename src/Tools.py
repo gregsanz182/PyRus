@@ -72,3 +72,6 @@ class CustomProcess(QProcess):
     def extendArg(self, argsList: list):
         self.args.extend(argsList)
         
+    def printArgs(self):
+        for arg in self.args:
+            print(arg, end=" ")

@@ -59,18 +59,12 @@ class EncoderFLACTools(EncoderTools):
         """Returns the CustomProcess with commandline arguments defined"""
         process = CustomProcess()
         process.setProgram("resources\\tools\\flac")
-        process.appendArg("--totally-silent")
-        process.appendArg("-f")
+        process.extendArg(["--totally-silent", "-f", "--ignore-chunk-sizes"])
         if self.containerBox.currentIndex() == 1:
             process.appendArg("--ogg")
         process.appendArg("-"+self.compressionLevels[self.compressionLevelBox.currentIndex()])
-        """if audioFile.metadata["<coverfile>"] is not None:
-            cmdline += " --picture=3|"
-            if audioFile.metadata["<covermime>"] is not None:
-                cmdline += audioFile.metadata["<covermime>"]
-            cmdline += "|||"
-            cmdline += audioFile.metadata["<coverfile>"]"""
-        
+        if audioFile.metadata["<coverfile>"] and audioFile.metadata["<covermime>"]:
+            process.appendArg("--picture=3|{0}|||{1}".format(audioFile.metadata["<covermime>"], audioFile.metadata["<coverfile>"]))
         process.extendArg(self.getTagArgs(audioFile))
         process.appendArg('--output-name={0}'.format(outputPath))
         process.appendArg("-")

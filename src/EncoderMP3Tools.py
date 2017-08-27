@@ -76,7 +76,13 @@ class EncoderMP3Tools(EncoderTools):
 
     def defineTagsMapping(self):
         """Defines the mapping of the tags needed for the use in the encoder CLI"""
-        pass
+        self.tagsMapping["<title>"] = "TIT2"
+        self.tagsMapping["<albumartist>"] = "TPE2"
+        self.tagsMapping["<artist>"] =  "TPE1"
+        self.tagsMapping["<album>"] = "TALB"
+        self.tagsMapping["<genre>"] = "TCON"
+        self.tagsMapping["<year>"] = "TYER"
+        self.tagsMapping["<comment>"] = "COMM"
 
     def makeConnections(self):
         """Makes the connection between the signals and slots of the GUI components"""
@@ -84,8 +90,39 @@ class EncoderMP3Tools(EncoderTools):
 
     def prepareProcess(self, audioFile: FileAudio, outputPath: str) -> CustomProcess:
         """Returns the CustomProcess with commandline arguments defined"""
-        pass
+        process = CustomProcess()
+        process.setProgram("resources\\tools\\lame")
+        process.extendArg(self.getBitrateModeArgs())
+        process.extendArg(self.getTagArgs(audioFile))
+        if audioFile.metadata["<coverfile>"]:
+            process.extendArg(["--ti", str(audioFile.metadata["<coverfile>"])])
+        process.extendArg(["--ignorelength", "--verbose", "-", outputPath])
+        return process
 
     def getExtension(self) -> str:
         """Returns the extension selected in the GUI"""
         return ".mp3"
+
+    def getBitrateModeArgs(self) -> list:
+        if self.bitrateModeBox.currentIndex() == 0:
+            return ["--cbr", "-b", str(self.listBitrates[self.bitrateCBRBox.currentIndex()])]
+        elif self.bitrateModeBox.currentIndex() == 1:
+            return ["--vbr-new", "-V", str(self.qualityVBRBox.currentIndex())]
+        elif self.bitrateModeBox.currentIndex() == 2:
+            return ["--abr", str(self.listBitrates[self.bitrateABRBox.currentIndex()])]
+
+    def getTagArgs(self, audioFile: FileAudio) -> list:
+        """Returns the tags values formatted for the use in the CLI. Recieves the audioFile
+        with its corresponding tags"""
+        args = []
+        for field, value in audioFile.metadata.items():
+            if field in self.tagsMapping and value is not None:
+                args.extend(['--tv', '{0}={1}'.format(self.tagsMapping[field], value)])
+        tdn = ""
+        if audioFile.metadata["<tracknumber>"]:
+            tdn += audioFile.metadata["<tracknumber>"]
+        if audioFile.metadata["<tracktotal>"]:
+            tdn += "/"+audioFile.metadata["<tracktotal>"]
+        if tdn != "":
+            args.extend(['--tv', 'TRCK={0}'.format(tdn)])
+        return args
