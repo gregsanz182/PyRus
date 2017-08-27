@@ -1,6 +1,7 @@
 import os
 from PySide.QtGui import QFrame, QVBoxLayout, QHBoxLayout, \
-QLineEdit, QToolButton, QIcon, QLabel, QFileDialog
+QLineEdit, QToolButton, QIcon, QLabel, QFileDialog, QCheckBox, \
+QSpinBox, QSizePolicy
 from PySide.QtCore import QSize, Qt
 from EncoderMP3Tools import EncoderMP3Tools
 from EncoderFLACTools import EncoderFLACTools
@@ -19,44 +20,20 @@ class BottomFrame(QFrame):
         self.initComponents()
 
         self.layout = QHBoxLayout(self)
-        self.layout.setSpacing(30)
+        self.layout.setSpacing(45)
         self.setOutputPreferencesLayout()
-        self.setFormatPreferencesLayout()
+        self.setSecondColumnLayout()
         self.layout.addStretch()
-        self.setStartButton()
+        self.setStartLayout()
 
-        self.makeConnections()
+        #self.makeConnections()
 
     def initComponents(self):
         """Initializes the components"""
-
         #Encoders Tools initialization
-        self.mp3tools = EncoderMP3Tools()
-        self.flactools = EncoderFLACTools()
-        
-    def setFormatPreferencesLayout(self):
-        """Sets the layout that contains the items that handles the format preferences"""
-        self.formatWidgets = WidgetList()
-        self.formatLayout = QVBoxLayout()
-        self.formatLayout.setSpacing(6)
-        self.layout.addLayout(self.formatLayout)
-
-        self.formatBox = CustomComboBox()
-        self.formatLayoutTop = CustomHFormLayout()
-        self.formatLayout.addLayout(self.formatLayoutTop)
-        self.formatLayoutTop.addField(QLabel("Output Format"), self.formatBox)
-
-        self.formatBox.addItem(self.flactools.formatName)
-        self.formatLayout.addWidget(self.flactools.preferencesWidget)
-        self.formatWidgets.appendWidget(self.flactools.preferencesWidget)
-
-        self.formatBox.addItem(self.mp3tools.formatName)
-        self.formatLayout.addWidget(self.mp3tools.preferencesWidget)
-        self.formatWidgets.appendWidget(self.mp3tools.preferencesWidget)
-
-        self.formatWidgets.showOnlyAWidget(self.formatBox.currentIndex())
-
-        self.formatLayout.addStretch()
+        self.encodersTools = []
+        self.encodersTools.append(EncoderMP3Tools())
+        self.encodersTools.append(EncoderFLACTools())
 
     def setOutputPreferencesLayout(self):
         """Sets the layout that contains the items that handles the format preferences"""
@@ -83,15 +60,70 @@ class BottomFrame(QFrame):
 
         self.outputLayout.addStretch()
 
-    def setStartButton(self):
-        """Sets the button that triggers de conversion process"""
+    def setSecondColumnLayout(self):
+        #Second ColumnLayout
+        self.secondColumnLayout = QVBoxLayout()
+        self.secondColumnLayout.setContentsMargins(0, 2, 0, 10)
+        self.secondColumnLayout.setSpacing(3)
+        self.layout.addLayout(self.secondColumnLayout)
+
+        #Layout that contains the format combo box and the preferences button
+        self.formatLayout = QHBoxLayout()
+        self.formatLayout.setContentsMargins(0, 0, 0, 0)
+        self.formatLayout.setSpacing(5)
+        self.secondColumnLayout.addWidget(QLabel("Output Format"))
+        self.secondColumnLayout.addLayout(self.formatLayout)
+
+        #Format Layout elements
+        self.formatBox = CustomComboBox()
+        for encoderTool in self.encodersTools:
+            self.formatBox.addItem(encoderTool.formatName, encoderTool)
+        self.formatLayout.addWidget(self.formatBox)
+        self.formatPrefButton = QToolButton()
+        self.formatPrefButton.setIcon(QIcon("resources\\imgs\\formatPreferencesIcon.png"))
+        self.formatPrefButton.setFixedSize(QSize(25, 25))
+        self.formatLayout.addWidget(self.formatPrefButton)
+
+        self.secondColumnLayout.addStretch()
+
+        #Other output preferences
+        self.overwriteCheckBox = QCheckBox("Overwrite existing files")
+        self.removeConvertedCheckBox = QCheckBox("Remove converted files from the list")
+        self.secondColumnLayout.addWidget(self.overwriteCheckBox)
+        self.secondColumnLayout.addWidget(self.removeConvertedCheckBox)
+
+    def setStartLayout(self):
+        """Sets the layout that contains the start button and other preferences."""
+        self.startLayout = QVBoxLayout()
+        self.startLayout.setContentsMargins(0, 0, 0, 5)
+        self.startLayout.setSpacing(5)
+        self.layout.addLayout(self.startLayout)
+
+        self.startLayout.addStretch()
+
+        #Layout that contains QSpinBox
+        self.convertersLayout = QHBoxLayout()
+        self.convertersLayout.setContentsMargins(0, 0, 0, 0)
+        self.convertersLayout.setSpacing(6)
+        self.startLayout.addLayout(self.convertersLayout)
+        self.convertersLayout.addWidget(QLabel("Number of parallel conversions"))
+        self.numberConverters = QSpinBox()
+        self.numberConverters.setMinimum(1)
+        self.numberConverters.setMaximum(5)
+        self.numberConverters.setValue(1)
+        self.numberConverters.setFixedSize(QSize(37, 23))
+        self.convertersLayout.addWidget(self.numberConverters)
+
+        #Start Button
         self.startButton = QToolButton()
         self.startButton.setIcon(QIcon("resources/imgs/startConvert.png"))
         self.startButton.setIconSize(QSize(59, 29))
         self.startButton.setText("Start Conversion")
         self.startButton.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        self.startButton.setStyleSheet("QToolButton {padding: 0px 16px 7px 16px;}")
-        self.layout.addWidget(self.startButton, alignment=Qt.AlignBottom)
+        self.startButton.setFixedHeight(55)
+        self.startButton.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.startLayout.addWidget(self.startButton)
+
 
     def makeConnections(self):
         """Makes the connections between the signals and slots of the frame components."""
